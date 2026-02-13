@@ -43,7 +43,7 @@ export default function LiveMonitoring() {
   return (
     <Layout title="الرصد المباشر" titleEn="Live Monitoring">
       {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-white/5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0d1117 0%, #0d2117 50%, #0d1117 100%)" }}>
+      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -55,7 +55,7 @@ export default function LiveMonitoring() {
           </div>
           <div className="text-right flex items-center gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">الرصد المباشر</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">الرصد المباشر</h2>
               <p className="text-xs text-gray-500">Live Monitoring Feed</p>
               <p className="text-sm text-gray-400 mt-1">تتبع الأحداث والتنبيهات في الوقت الفعلي</p>
             </div>
@@ -68,7 +68,7 @@ export default function LiveMonitoring() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-2 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-green-400">32</div>
@@ -77,16 +77,16 @@ export default function LiveMonitoring() {
             <Wifi size={20} className="text-green-400" />
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-2 justify-end">
             <div className="text-right">
-              <div className="text-2xl font-bold text-teal-400">{eventCount}</div>
+              <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{eventCount}</div>
               <div className="text-sm text-gray-400">أحداث اليوم</div>
             </div>
-            <Activity size={20} className="text-teal-400" />
+            <Activity size={20} className="text-teal-600 dark:text-teal-400" />
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-2 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-red-400">5</div>
@@ -95,7 +95,7 @@ export default function LiveMonitoring() {
             <AlertTriangle size={20} className="text-red-400" />
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-2 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-amber-400">15</div>
@@ -107,20 +107,20 @@ export default function LiveMonitoring() {
       </div>
 
       {/* Live Feed */}
-      <div className="rounded-xl border border-white/5 overflow-hidden" style={{ background: "#111827" }}>
-        <div className="p-4 border-b border-white/5 flex items-center justify-between">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-xs text-gray-300 hover:bg-white/10">
+      <div className="rounded-xl border border-gray-100 dark:border-white/5 overflow-hidden bg-white dark:bg-[#111827]">
+        <div className="p-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-white/5 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-white/10">
             <RefreshCw size={12} />
             تحديث
           </button>
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isLive ? "bg-green-400 animate-pulse" : "bg-gray-500"}`} />
-            <span className="text-sm font-semibold text-white">البث المباشر</span>
+            <span className="text-sm font-semibold text-gray-800 dark:text-white">البث المباشر</span>
           </div>
         </div>
         <div className="divide-y divide-white/5">
           {liveEvents.map((event, i) => (
-            <div key={i} className={`p-4 hover:bg-white/[0.02] transition-colors cursor-pointer border-r-2 ${
+            <div key={i} className={`p-4 hover:bg-gray-50 dark:bg-white/[0.02] transition-colors cursor-pointer border-r-2 ${
               event.severity === "عالي" ? "border-r-red-500" : event.severity === "متوسط" ? "border-r-amber-500" : "border-r-blue-500"
             }`}>
               <div className="flex items-start justify-between">
@@ -135,7 +135,7 @@ export default function LiveMonitoring() {
                 </div>
                 <div className="text-right flex-1 mr-4">
                   <div className="flex items-center gap-2 justify-end">
-                    <span className="text-sm text-gray-200">{event.description}</span>
+                    <span className="text-sm text-gray-800 dark:text-gray-200">{event.description}</span>
                     <span>{sourceIcons[event.source]}</span>
                   </div>
                   <span className="text-xs text-gray-500">{event.channel}</span>

@@ -16,19 +16,19 @@ export default function ThreatMap() {
     <Layout title="خريطة التهديدات" titleEn="Threat Map">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 cursor-pointer hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
-              <div className="text-2xl font-bold text-teal-400">{totalLeaks}</div>
+              <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{totalLeaks}</div>
               <div className="text-sm text-gray-400">إجمالي التسريبات</div>
             </div>
             <div className="p-2 rounded-lg bg-teal-500/10">
-              <Shield size={20} className="text-teal-400" />
+              <Shield size={20} className="text-teal-600 dark:text-teal-400" />
             </div>
           </div>
           <div className="text-xs text-gray-600 mt-2">اضغط للتفاصيل ←</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 cursor-pointer hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-red-400">{wideScale}</div>
@@ -40,7 +40,7 @@ export default function ThreatMap() {
           </div>
           <div className="text-xs text-gray-600 mt-2">اضغط للتفاصيل ←</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 cursor-pointer hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-purple-400">{affectedRegions}</div>
@@ -52,7 +52,7 @@ export default function ThreatMap() {
           </div>
           <div className="text-xs text-gray-600 mt-2">اضغط للتفاصيل ←</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 cursor-pointer hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-amber-400">{totalRecords.toLocaleString()}</div>
@@ -75,8 +75,8 @@ export default function ThreatMap() {
             onClick={() => setActiveFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
               activeFilter === f
-                ? "bg-teal-500/20 text-teal-400 border border-teal-500/30"
-                : "bg-white/5 text-gray-400 hover:bg-white/10"
+                ? "bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30"
+                : "bg-gray-100 dark:bg-white/5 text-gray-400 hover:bg-white/10"
             }`}
           >
             {f}
@@ -86,10 +86,10 @@ export default function ThreatMap() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map */}
-        <div className="lg:col-span-2 rounded-xl p-5 border border-white/5 relative" style={{ background: "#111827" }}>
-          <h3 className="text-base font-semibold text-white mb-4 flex items-center gap-2 justify-end">
+        <div className="lg:col-span-2 rounded-xl p-5 border border-gray-100 dark:border-white/5 relative bg-white dark:bg-[#111827]">
+          <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2 justify-end">
             خريطة التهديدات — المملكة العربية السعودية
-            <Globe size={18} className="text-teal-400" />
+            <Globe size={18} className="text-teal-600 dark:text-teal-400" />
           </h3>
           {/* Simplified Saudi Arabia Map */}
           <div className="relative w-full" style={{ height: "500px" }}>
@@ -137,7 +137,7 @@ export default function ThreatMap() {
                       x={pos.x}
                       y={pos.y - 5}
                       textAnchor="middle"
-                      fill="white"
+                      fill="#374151"
                       fontSize="12"
                       fontWeight="bold"
                     >
@@ -147,7 +147,7 @@ export default function ThreatMap() {
                       x={pos.x}
                       y={pos.y + 10}
                       textAnchor="middle"
-                      fill="rgba(255,255,255,0.7)"
+                      fill="#6b7280"
                       fontSize="8"
                       fontFamily="IBM Plex Sans Arabic"
                     >
@@ -168,19 +168,19 @@ export default function ThreatMap() {
         </div>
 
         {/* Region Ranking */}
-        <div className="rounded-xl p-5 border border-white/5" style={{ background: "#111827" }}>
-          <h3 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
+        <div className="rounded-xl p-5 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
+          <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
             <AlertTriangle size={16} className="text-amber-400" />
             ترتيب المناطق حسب التسريبات
           </h3>
           <div className="space-y-4">
             {threatMapRegions.map((region) => (
-              <div key={region.name} className="pb-3 border-b border-white/5 last:border-0">
+              <div key={region.name} className="pb-3 border-b border-gray-100 dark:border-white/5 last:border-0">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-500">{region.leaks} تسريب</span>
-                  <span className="text-sm font-semibold text-gray-200">{region.name}</span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{region.name}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden mb-1">
+                <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden mb-1">
                   <div
                     className="h-full rounded-full bg-red-500"
                     style={{ width: `${(region.leaks / 57) * 100}%` }}

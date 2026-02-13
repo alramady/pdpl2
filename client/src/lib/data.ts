@@ -12,31 +12,31 @@ export const adminUser = {
 
 export const dashboardStats = {
   totalIncidents: 329,
-  newIncidents: 141,
-  exposedRecords: "245.1M",
+  newIncidents: 146,
+  exposedRecords: "245.2M",
   piiTypes: 54,
   affectedSectors: 36,
   incidentStatus: {
-    new: 141,
-    underAnalysis: 50,
-    documented: 87,
-    completed: 51
+    new: 137,
+    underAnalysis: 47,
+    documented: 81,
+    completed: 48
   }
 };
 
 export const monitoringSources = [
-  { name: "تليجرام", nameEn: "Telegram", count: 111, percentage: 34, color: "#14b8a6" },
-  { name: "دارك ويب", nameEn: "Dark Web", count: 119, percentage: 36, color: "#8b5cf6" },
-  { name: "مواقع اللصق", nameEn: "Paste Sites", count: 99, percentage: 30, color: "#f59e0b" }
+  { name: "تليجرام", nameEn: "Telegram", count: 113, percentage: 34, color: "#14b8a6" },
+  { name: "دارك ويب", nameEn: "Dark Web", count: 121, percentage: 36, color: "#8b5cf6" },
+  { name: "مواقع اللصق", nameEn: "Paste Sites", count: 100, percentage: 30, color: "#f59e0b" }
 ];
 
 export const affectedSectors = [
   { name: "القطاع الحكومي", percentage: 10, incidents: 34, records: 16264514, icon: "🏛️" },
-  { name: "البنوك والتمويل", percentage: 5, incidents: 16, records: 15458625, icon: "🏦" },
-  { name: "النقل والطيران", percentage: 5, incidents: 16, records: 17301663, icon: "✈️" },
-  { name: "التقنية المالية", percentage: 5, incidents: 16, records: 14786526, icon: "💳" },
   { name: "البناء والمشاريع الكبرى", percentage: 5, incidents: 16, records: 15829279, icon: "🏗️" },
-  { name: "الاتصالات", percentage: 5, incidents: 16, records: 13862199, icon: "📡" }
+  { name: "البنوك والتمويل", percentage: 5, incidents: 16, records: 15458625, icon: "🏦" },
+  { name: "التوظيف والموارد البشرية", percentage: 5, incidents: 16, records: 17665225, icon: "👥" },
+  { name: "الاتصالات", percentage: 5, incidents: 16, records: 13862199, icon: "📡" },
+  { name: "النقل والطيران", percentage: 5, incidents: 16, records: 17301663, icon: "✈️" }
 ];
 
 export const radarStats = {
@@ -47,13 +47,13 @@ export const radarStats = {
 };
 
 export const piiClassification = [
-  { name: "رقم الهاتف", count: 215, color: "#14b8a6" },
-  { name: "رقم الهوية الوطنية", count: 196, color: "#06b6d4" },
-  { name: "البريد الإلكتروني", count: 169, color: "#3b82f6" },
-  { name: "الاسم الكامل", count: 167, color: "#8b5cf6" },
-  { name: "العنوان", count: 95, color: "#a855f7" },
-  { name: "رقم الآيبان", count: 55, color: "#ec4899" },
-  { name: "بطاقة ائتمان", count: 39, color: "#f43f5e" },
+  { name: "رقم الهاتف", count: 220, color: "#3b82f6" },
+  { name: "رقم الهوية الوطنية", count: 197, color: "#2563eb" },
+  { name: "البريد الإلكتروني", count: 173, color: "#16a34a" },
+  { name: "الاسم الكامل", count: 167, color: "#15803d" },
+  { name: "العنوان", count: 95, color: "#7c3aed" },
+  { name: "رقم الآيبان", count: 56, color: "#eab308" },
+  { name: "بطاقة ائتمان", count: 39, color: "#ef4444" },
   { name: "رقم الجواز", count: 38, color: "#f97316" }
 ];
 
@@ -126,7 +126,7 @@ export const monthlyTrend = [
   { month: "2025-11", count: 21 },
   { month: "2025-12", count: 6 },
   { month: "2026-01", count: 33 },
-  { month: "2026-02", count: 102 }
+  { month: "2026-02", count: 107 }
 ];
 
 export const activityLog = [
@@ -253,7 +253,20 @@ export const sidebarNavigation = {
     items: [
       { name: "مصنّف PII", path: "/pii-classifier", icon: "pii" },
       { name: "سلسلة الأدلة", path: "/evidence-chain", icon: "evidence" },
-      { name: "قواعد صيد التهديدات", path: "/threat-hunting", icon: "hunting" }
+      { name: "قواعد صيد التهديدات", path: "/threat-hunting", icon: "hunting" },
+      { name: "أدوات OSINT", path: "/osint-tools", icon: "osint" },
+      { name: "رسم المعرفة", path: "/knowledge-graph", icon: "graph" },
+      { name: "مقاييس الدقة", path: "/accuracy-metrics", icon: "accuracy" }
+    ]
+  },
+  management: {
+    label: "إداري",
+    labelEn: "Management",
+    items: [
+      { name: "مهام الرصد", path: "/monitoring-tasks", icon: "tasks" },
+      { name: "قنوات التنبيه", path: "/alert-channels", icon: "alerts" },
+      { name: "التقارير المجدولة", path: "/scheduled-reports", icon: "scheduled" },
+      { name: "التحقق من التوثيق", path: "/verification", icon: "verify" }
     ]
   }
 };

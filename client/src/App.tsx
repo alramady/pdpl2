@@ -20,6 +20,13 @@ import LiveMonitoring from "./pages/LiveMonitoring";
 import PIIClassifier from "./pages/PIIClassifier";
 import EvidenceChain from "./pages/EvidenceChain";
 import ThreatHunting from "./pages/ThreatHunting";
+import OSINTTools from "./pages/OSINTTools";
+import KnowledgeGraph from "./pages/KnowledgeGraph";
+import AccuracyMetrics from "./pages/AccuracyMetrics";
+import MonitoringTasks from "./pages/MonitoringTasks";
+import AlertChannels from "./pages/AlertChannels";
+import ScheduledReports from "./pages/ScheduledReports";
+import Verification from "./pages/Verification";
 import Login from "./pages/Login";
 
 function Router() {
@@ -30,11 +37,6 @@ function Router() {
   const handleLogin = () => {
     localStorage.setItem("pdpl_auth", "true");
     setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("pdpl_auth");
-    setIsAuthenticated(false);
   };
 
   if (!isAuthenticated) {
@@ -56,6 +58,13 @@ function Router() {
       <Route path="/pii-classifier" component={PIIClassifier} />
       <Route path="/evidence-chain" component={EvidenceChain} />
       <Route path="/threat-hunting" component={ThreatHunting} />
+      <Route path="/osint-tools" component={OSINTTools} />
+      <Route path="/knowledge-graph" component={KnowledgeGraph} />
+      <Route path="/accuracy-metrics" component={AccuracyMetrics} />
+      <Route path="/monitoring-tasks" component={MonitoringTasks} />
+      <Route path="/alert-channels" component={AlertChannels} />
+      <Route path="/scheduled-reports" component={ScheduledReports} />
+      <Route path="/verification" component={Verification} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -65,7 +74,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

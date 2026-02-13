@@ -23,15 +23,15 @@ export default function ThreatHunting() {
   return (
     <Layout title="قواعد صيد التهديدات" titleEn="Threat Hunting Rules">
       {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-white/5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0d1117 0%, #1a0d2e 50%, #0d1117 100%)" }}>
+      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
         <div className="flex items-center justify-between">
-          <button onClick={() => toast("إنشاء قاعدة", { description: "قريباً" })} className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 text-teal-400 rounded-lg text-sm hover:bg-teal-500/30">
+          <button onClick={() => toast("إنشاء قاعدة", { description: "قريباً" })} className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 text-teal-600 dark:text-teal-400 rounded-lg text-sm hover:bg-teal-500/30">
             <Plus size={14} />
             إنشاء قاعدة جديدة
           </button>
           <div className="text-right flex items-center gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">قواعد صيد التهديدات</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">قواعد صيد التهديدات</h2>
               <p className="text-xs text-gray-500">Threat Hunting Rules (YARA-like)</p>
               <p className="text-sm text-gray-400 mt-1">قواعد كشف متقدمة لاكتشاف البيانات الشخصية المسربة تلقائياً</p>
             </div>
@@ -44,19 +44,19 @@ export default function ThreatHunting() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
-          <div className="text-2xl font-bold text-teal-400">{huntingRules.length}</div>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
+          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{huntingRules.length}</div>
           <div className="text-sm text-gray-400">قواعد مُعرَّفة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-green-400">{huntingRules.filter(r => r.status === "نشط").length}</div>
           <div className="text-sm text-gray-400">قواعد نشطة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-amber-400">{huntingRules.reduce((s, r) => s + r.matches, 0)}</div>
           <div className="text-sm text-gray-400">إجمالي المطابقات</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-purple-400">3</div>
           <div className="text-sm text-gray-400">أنواع القواعد</div>
         </div>
@@ -65,7 +65,7 @@ export default function ThreatHunting() {
       {/* Rules */}
       <div className="space-y-4">
         {huntingRules.map((rule) => (
-          <div key={rule.id} className="rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+          <div key={rule.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
                 <button
@@ -78,14 +78,14 @@ export default function ThreatHunting() {
                   ● {rule.status}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded ${severityColors[rule.severity]}`}>{rule.severity}</span>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded">{rule.type}</span>
+                <span className="text-xs text-gray-500 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded">{rule.type}</span>
               </div>
               <div className="text-right">
-                <h4 className="text-sm font-semibold text-white">{rule.name}</h4>
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{rule.name}</h4>
                 <p className="text-xs text-gray-500">{rule.nameEn} · {rule.id}</p>
               </div>
             </div>
-            <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-3 font-mono text-xs text-teal-400 text-left" dir="ltr">
+            <div className="p-3 rounded-lg bg-black/30 border border-gray-100 dark:border-white/5 mb-3 font-mono text-xs text-teal-600 dark:text-teal-400 text-left" dir="ltr">
               <Code size={12} className="inline mr-2 text-gray-500" />
               {rule.pattern}
             </div>

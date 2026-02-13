@@ -21,17 +21,17 @@ export default function EvidenceChain() {
   return (
     <Layout title="سلسلة الأدلة" titleEn="Evidence Chain">
       {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-white/5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%)" }}>
+      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
         <div className="flex items-center justify-between">
           <div />
           <div className="text-right flex items-center gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">سلسلة الأدلة الرقمية</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">سلسلة الأدلة الرقمية</h2>
               <p className="text-xs text-gray-500">Digital Evidence Chain</p>
               <p className="text-sm text-gray-400 mt-1">توثيق وحفظ الأدلة الرقمية مع ضمان سلامة البيانات وسلسلة الحفظ</p>
             </div>
             <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
-              <Link2 size={24} className="text-teal-400" />
+              <Link2 size={24} className="text-teal-600 dark:text-teal-400" />
             </div>
           </div>
         </div>
@@ -39,19 +39,19 @@ export default function EvidenceChain() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
-          <div className="text-2xl font-bold text-teal-400">{evidenceItems.length}</div>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
+          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{evidenceItems.length}</div>
           <div className="text-sm text-gray-400">أدلة مسجلة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-green-400">{evidenceItems.filter(e => e.status === "موثق").length}</div>
           <div className="text-sm text-gray-400">أدلة موثقة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-amber-400">{evidenceItems.filter(e => e.status === "قيد التوثيق").length}</div>
           <div className="text-sm text-gray-400">قيد التوثيق</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-blue-400">100%</div>
           <div className="text-sm text-gray-400">سلامة البيانات</div>
         </div>
@@ -60,40 +60,40 @@ export default function EvidenceChain() {
       {/* Evidence Items */}
       <div className="space-y-4">
         {evidenceItems.map((evidence) => (
-          <div key={evidence.id} className="rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all" style={{ background: "#111827" }}>
+          <div key={evidence.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:border-white/10 transition-all bg-white dark:bg-[#111827]">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <button onClick={() => toast("تحميل الدليل", { description: "قريباً" })} className="p-1.5 rounded hover:bg-white/5 text-gray-400">
+                <button onClick={() => toast("تحميل الدليل", { description: "قريباً" })} className="p-1.5 rounded hover:bg-gray-100 dark:bg-white/5 text-gray-400">
                   <Download size={14} />
                 </button>
-                <button className="p-1.5 rounded hover:bg-white/5 text-gray-400">
+                <button className="p-1.5 rounded hover:bg-gray-100 dark:bg-white/5 text-gray-400">
                   <Eye size={14} />
                 </button>
                 <span className={`text-xs px-2 py-0.5 rounded ${statusColors[evidence.status]}`}>{evidence.status}</span>
               </div>
               <div className="text-right">
-                <h4 className="text-sm font-semibold text-white">{evidence.title}</h4>
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{evidence.title}</h4>
                 <div className="flex items-center gap-2 justify-end mt-1">
                   <span className="text-xs text-gray-500">{evidence.id}</span>
                   <span className="text-xs text-gray-600">←</span>
-                  <span className="text-xs text-teal-400">{evidence.leakId}</span>
+                  <span className="text-xs text-teal-600 dark:text-teal-400">{evidence.leakId}</span>
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+              <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                 <div className="text-xs text-gray-500">التاريخ</div>
-                <div className="text-xs font-semibold text-white">{evidence.date}</div>
+                <div className="text-xs font-semibold text-gray-800 dark:text-white">{evidence.date}</div>
               </div>
-              <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+              <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                 <div className="text-xs text-gray-500">النوع</div>
-                <div className="text-xs font-semibold text-white">{evidence.type}</div>
+                <div className="text-xs font-semibold text-gray-800 dark:text-white">{evidence.type}</div>
               </div>
-              <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+              <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                 <div className="text-xs text-gray-500">السلامة</div>
                 <div className="text-xs font-semibold text-green-400">{evidence.integrity} ✓</div>
               </div>
-              <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+              <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                 <div className="text-xs text-gray-500">Hash</div>
                 <div className="text-[10px] font-mono text-gray-400 truncate">{evidence.hash}</div>
               </div>
@@ -103,7 +103,7 @@ export default function EvidenceChain() {
               <span className="text-xs text-gray-500">سلسلة الحفظ:</span>
               {evidence.chain.map((step, i) => (
                 <span key={i} className="flex items-center gap-1">
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-teal-500/10 text-teal-400 border border-teal-500/20">{step}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">{step}</span>
                   {i < evidence.chain.length - 1 && <span className="text-gray-600">←</span>}
                 </span>
               ))}

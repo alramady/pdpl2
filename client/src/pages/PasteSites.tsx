@@ -21,28 +21,28 @@ const recentPastes = [
 ];
 
 const impactColors: Record<string, string> = {
-  "عالي": "text-red-400",
-  "متوسط": "text-amber-400",
-  "محدود": "text-blue-400"
+  "عالي": "text-red-600 dark:text-red-400",
+  "متوسط": "text-amber-600 dark:text-amber-400",
+  "محدود": "text-blue-600 dark:text-blue-400"
 };
 
 const severityBg: Record<string, string> = {
-  "واسع النطاق": "bg-red-500/20 text-red-400",
-  "مرتفع": "bg-amber-500/20 text-amber-400",
-  "متوسط": "bg-blue-500/20 text-blue-400",
-  "محدود": "bg-gray-500/20 text-gray-400"
+  "واسع النطاق": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+  "مرتفع": "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+  "متوسط": "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
+  "محدود": "bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400"
 };
 
 export default function PasteSites() {
   return (
     <Layout title="مواقع اللصق" titleEn="Paste Sites">
       {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-white/5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #2d1a0d 100%)" }}>
+      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
         <div className="flex items-center justify-between">
           <div />
           <div className="text-right flex items-center gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">رصد مواقع اللصق</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">رصد مواقع اللصق</h2>
               <p className="text-xs text-gray-500">Paste Sites Monitoring</p>
               <p className="text-sm text-gray-400 mt-1">مراقبة مواقع اللصق العامة لاكتشاف تسريبات البيانات السعودية</p>
             </div>
@@ -55,19 +55,19 @@ export default function PasteSites() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
-          <div className="text-2xl font-bold text-teal-400">{pasteSites.length}</div>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
+          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{pasteSites.length}</div>
           <div className="text-sm text-gray-400">مواقع مراقبة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-amber-400">{pasteSites.reduce((s, p) => s + p.leaks, 0)}</div>
           <div className="text-sm text-gray-400">تسريبات مكتشفة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-green-400">{pasteSites.filter(p => p.status === "نشط").length}</div>
           <div className="text-sm text-gray-400">مواقع نشطة</div>
         </div>
-        <div className="rounded-xl p-4 border border-white/5" style={{ background: "#111827" }}>
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
           <div className="text-2xl font-bold text-purple-400">47,350</div>
           <div className="text-sm text-gray-400">سجلات مكشوفة</div>
         </div>
@@ -76,30 +76,30 @@ export default function PasteSites() {
       {/* Monitored Sites */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => toast.success("تم التحديث")} className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg text-sm text-gray-300 hover:bg-white/10">
+          <button onClick={() => toast.success("تم التحديث")} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-white/10">
             <RefreshCw size={14} />
             فحص الآن
           </button>
-          <h3 className="text-lg font-semibold text-white">المواقع المراقبة</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">المواقع المراقبة</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pasteSites.map((site) => (
-            <div key={site.id} className="rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all cursor-pointer" style={{ background: "#111827" }}>
+            <div key={site.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:border-white/10 transition-all cursor-pointer bg-white dark:bg-[#111827]">
               <div className="flex items-start justify-between mb-3">
                 <span className="text-xs text-green-400">● {site.status}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-white">{site.name}</span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-white">{site.name}</span>
                   <FileText size={16} className="text-amber-400" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+                <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                   <div className="text-xs text-gray-500">تسريبات</div>
                   <div className="text-sm font-semibold text-amber-400">{site.leaks}</div>
                 </div>
-                <div className="p-2 rounded-lg bg-white/[0.02] text-center">
+                <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] text-center">
                   <div className="text-xs text-gray-500">آخر فحص</div>
-                  <div className="text-xs font-semibold text-white">{site.lastScan}</div>
+                  <div className="text-xs font-semibold text-gray-800 dark:text-white">{site.lastScan}</div>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -113,10 +113,10 @@ export default function PasteSites() {
 
       {/* Recent Pastes */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4">آخر التسريبات المكتشفة</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">آخر التسريبات المكتشفة</h3>
         <div className="space-y-4">
           {recentPastes.map((paste) => (
-            <div key={paste.id} className="rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all cursor-pointer" style={{ background: "#111827" }}>
+            <div key={paste.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:border-white/10 transition-all cursor-pointer bg-white dark:bg-[#111827]">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <Eye size={14} className="text-gray-400" />
@@ -125,13 +125,13 @@ export default function PasteSites() {
                   <span className="text-xs text-gray-600">{paste.date}</span>
                 </div>
                 <div className="text-right flex-1 mr-4">
-                  <h4 className="text-sm font-semibold text-white">{paste.title}</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{paste.title}</h4>
                   <p className="text-xs text-gray-500 mt-1">{paste.id} — {paste.records.toLocaleString()} سجل</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 mt-3 justify-end">
                 {paste.pii.map((tag) => (
-                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-gray-400 border border-gray-200 dark:border-white/10">{tag}</span>
                 ))}
               </div>
             </div>
