@@ -59,24 +59,24 @@ export default function KnowledgeGraph() {
           { label: "القطاعات", value: nodes.filter(n => n.type === "sector").length, icon: <Building2 size={20} className="text-indigo-600" />, bg: "bg-indigo-50" },
           { label: "المصادر", value: nodes.filter(n => n.type === "source").length, icon: <Users size={20} className="text-amber-600" />, bg: "bg-amber-50" },
         ].map((s, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+          <div key={i} className="bg-card rounded-xl border border-border p-4">
             <div className="flex items-center gap-3 justify-end">
-              <div className="text-right"><div className="text-2xl font-bold text-gray-800">{s.value}</div><div className="text-xs text-gray-500">{s.label}</div></div>
+              <div className="text-right"><div className="text-2xl font-bold text-foreground">{s.value}</div><div className="text-xs text-muted-foreground">{s.label}</div></div>
               <div className={`p-2 rounded-lg ${s.bg}`}>{s.icon}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 mb-4 p-4">
+      <div className="bg-card rounded-xl border border-border mb-4 p-4">
         <div className="flex items-center gap-3">
           <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="بحث في العقد..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-teal-300" />
-          <Search size={18} className="text-gray-400" />
+            className="flex-1 px-4 py-2 rounded-lg border border-border bg-secondary text-sm text-foreground placeholder-gray-400 focus:outline-none focus:border-teal-300" />
+          <Search size={18} className="text-muted-foreground" />
         </div>
         <div className="flex items-center gap-4 mt-3">
           {Object.entries(typeLabels).map(([key, label]) => (
-            <div key={key} className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div key={key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: typeColors[key] }} />
               {label}
             </div>
@@ -84,7 +84,7 @@ export default function KnowledgeGraph() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-4 relative" style={{ height: 500 }}>
+      <div className="bg-card rounded-xl border border-border p-4 relative" style={{ height: 500 }}>
         <svg width="100%" height="100%" viewBox="0 0 800 600">
           {edges.map((edge, i) => {
             const from = nodes.find(n => n.id === edge.from);
@@ -103,25 +103,25 @@ export default function KnowledgeGraph() {
 
       {selectedNode && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedNode(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6" onClick={e => e.stopPropagation()} dir="rtl">
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-md p-6" onClick={e => e.stopPropagation()} dir="rtl">
             <div className="flex items-center justify-between mb-4">
-              <button onClick={() => setSelectedNode(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
-              <h3 className="text-lg font-bold text-gray-800">تفاصيل العقدة</h3>
+              <button onClick={() => setSelectedNode(null)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-foreground">تفاصيل العقدة</h3>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between"><span className="text-sm text-gray-500">الاسم</span><span className="text-sm font-medium">{selectedNode.label}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">النوع</span><span className="text-sm font-medium">{typeLabels[selectedNode.type]}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">الروابط</span><span className="text-sm font-medium">{edges.filter(e => e.from === selectedNode.id || e.to === selectedNode.id).length}</span></div>
-              <div className="pt-2 border-t border-gray-100">
-                <h4 className="text-xs font-semibold text-gray-700 mb-2">العقد المتصلة</h4>
+              <div className="flex justify-between"><span className="text-sm text-muted-foreground">الاسم</span><span className="text-sm font-medium">{selectedNode.label}</span></div>
+              <div className="flex justify-between"><span className="text-sm text-muted-foreground">النوع</span><span className="text-sm font-medium">{typeLabels[selectedNode.type]}</span></div>
+              <div className="flex justify-between"><span className="text-sm text-muted-foreground">الروابط</span><span className="text-sm font-medium">{edges.filter(e => e.from === selectedNode.id || e.to === selectedNode.id).length}</span></div>
+              <div className="pt-2 border-t border-border">
+                <h4 className="text-xs font-semibold text-foreground mb-2">العقد المتصلة</h4>
                 <div className="space-y-1">
                   {edges.filter(e => e.from === selectedNode.id || e.to === selectedNode.id).slice(0, 5).map((e, i) => {
                     const connectedId = e.from === selectedNode.id ? e.to : e.from;
                     const connected = nodes.find(n => n.id === connectedId);
                     return connected ? (
-                      <div key={i} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
-                        <span className="text-gray-400">{e.label}</span>
-                        <span className="text-gray-700">{connected.label}</span>
+                      <div key={i} className="flex items-center justify-between text-xs bg-secondary rounded-lg px-3 py-2">
+                        <span className="text-muted-foreground">{e.label}</span>
+                        <span className="text-foreground">{connected.label}</span>
                       </div>
                     ) : null;
                   })}

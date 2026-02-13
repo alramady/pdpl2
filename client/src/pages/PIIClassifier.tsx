@@ -35,7 +35,7 @@ const riskColors: Record<string, string> = {
   "حرج": "bg-red-100 text-red-700",
   "عالي": "bg-amber-100 text-amber-700",
   "متوسط": "bg-blue-100 text-blue-700",
-  "محدود": "bg-gray-100 text-gray-600",
+  "محدود": "bg-secondary text-muted-foreground",
 };
 
 const categoryColors: Record<string, string> = {
@@ -46,7 +46,7 @@ const categoryColors: Record<string, string> = {
   "صحي": "bg-green-100 text-green-700",
   "بيومتري": "bg-red-100 text-red-700",
   "حكومي": "bg-cyan-100 text-cyan-700",
-  "أصول": "bg-gray-100 text-gray-600",
+  "أصول": "bg-secondary text-muted-foreground",
 };
 
 export default function PIIClassifier() {
@@ -69,31 +69,31 @@ export default function PIIClassifier() {
     <Layout title="مصنّف PII" titleEn="PII Classifier">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-teal-600">{allPiiTypes.length}</div>
-          <div className="text-sm text-gray-500">أنواع PII مكتشفة</div>
+          <div className="text-sm text-muted-foreground">أنواع PII مكتشفة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-purple-600">{totalPii}</div>
-          <div className="text-sm text-gray-500">إجمالي الحالات</div>
+          <div className="text-sm text-muted-foreground">إجمالي الحالات</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-red-600">{criticalCount}</div>
-          <div className="text-sm text-gray-500">أنواع حرجة</div>
+          <div className="text-sm text-muted-foreground">أنواع حرجة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-amber-600">8</div>
-          <div className="text-sm text-gray-500">فئات تصنيف</div>
+          <div className="text-sm text-muted-foreground">فئات تصنيف</div>
         </div>
       </div>
 
       {/* Search & Filters */}
       <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 relative">
-          <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="البحث في أنواع البيانات..." className="w-full bg-white border border-gray-200 rounded-lg py-2 pr-10 pl-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-teal-500" />
+          <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="البحث في أنواع البيانات..." className="w-full bg-card border border-border rounded-lg py-2 pr-10 pl-4 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:border-teal-500" />
         </div>
-        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="bg-white border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-600 focus:outline-none">
+        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="bg-card border border-border rounded-lg py-2 px-3 text-sm text-muted-foreground focus:outline-none">
           <option value="all">جميع الفئات</option>
           <option value="هوية">هوية</option>
           <option value="مالي">مالي</option>
@@ -102,7 +102,7 @@ export default function PIIClassifier() {
           <option value="بيومتري">بيومتري</option>
           <option value="حكومي">حكومي</option>
         </select>
-        <select value={riskFilter} onChange={e => setRiskFilter(e.target.value)} className="bg-white border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-600 focus:outline-none">
+        <select value={riskFilter} onChange={e => setRiskFilter(e.target.value)} className="bg-card border border-border rounded-lg py-2 px-3 text-sm text-muted-foreground focus:outline-none">
           <option value="all">جميع المخاطر</option>
           <option value="حرج">حرج</option>
           <option value="عالي">عالي</option>
@@ -111,33 +111,33 @@ export default function PIIClassifier() {
       </div>
 
       {/* PII Types Table */}
-      <div className="rounded-xl border border-gray-100 overflow-hidden bg-white">
+      <div className="rounded-xl border border-border overflow-hidden bg-card">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="text-right p-4 text-xs text-gray-500 font-medium">نوع البيانات</th>
-              <th className="text-right p-4 text-xs text-gray-500 font-medium">الاسم الإنجليزي</th>
-              <th className="text-center p-4 text-xs text-gray-500 font-medium">الفئة</th>
-              <th className="text-center p-4 text-xs text-gray-500 font-medium">مستوى الخطورة</th>
-              <th className="text-center p-4 text-xs text-gray-500 font-medium">عدد الحالات</th>
-              <th className="text-center p-4 text-xs text-gray-500 font-medium">التوزيع</th>
+            <tr className="border-b border-border bg-secondary">
+              <th className="text-right p-4 text-xs text-muted-foreground font-medium">نوع البيانات</th>
+              <th className="text-right p-4 text-xs text-muted-foreground font-medium">الاسم الإنجليزي</th>
+              <th className="text-center p-4 text-xs text-muted-foreground font-medium">الفئة</th>
+              <th className="text-center p-4 text-xs text-muted-foreground font-medium">مستوى الخطورة</th>
+              <th className="text-center p-4 text-xs text-muted-foreground font-medium">عدد الحالات</th>
+              <th className="text-center p-4 text-xs text-muted-foreground font-medium">التوزيع</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((pii, i) => (
-              <tr key={i} onClick={() => setSelected(pii)} className="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer">
+              <tr key={i} onClick={() => setSelected(pii)} className="border-b border-gray-50 hover:bg-secondary transition-colors cursor-pointer">
                 <td className="p-4">
                   <div className="flex items-center gap-2 justify-end">
-                    <span className="text-sm font-medium text-gray-800">{pii.name}</span>
+                    <span className="text-sm font-medium text-foreground">{pii.name}</span>
                     <Fingerprint size={14} className="text-purple-500" />
                   </div>
                 </td>
-                <td className="p-4 text-right"><span className="text-xs text-gray-500 font-mono">{pii.nameEn}</span></td>
+                <td className="p-4 text-right"><span className="text-xs text-muted-foreground font-mono">{pii.nameEn}</span></td>
                 <td className="p-4 text-center"><span className={`text-xs px-2 py-0.5 rounded ${categoryColors[pii.category]}`}>{pii.category}</span></td>
                 <td className="p-4 text-center"><span className={`text-xs px-2 py-0.5 rounded ${riskColors[pii.risk]}`}>{pii.risk}</span></td>
-                <td className="p-4 text-center"><span className="text-sm font-semibold text-gray-800">{pii.count}</span></td>
+                <td className="p-4 text-center"><span className="text-sm font-semibold text-foreground">{pii.count}</span></td>
                 <td className="p-4">
-                  <div className="w-24 h-2 rounded-full bg-gray-100 overflow-hidden mx-auto">
+                  <div className="w-24 h-2 rounded-full bg-secondary overflow-hidden mx-auto">
                     <div className="h-full rounded-full bg-teal-500" style={{ width: `${(pii.count / 215) * 100}%` }} />
                   </div>
                 </td>
@@ -150,42 +150,42 @@ export default function PIIClassifier() {
       {/* Detail Modal */}
       {selected && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg" onClick={e => e.stopPropagation()} dir="rtl">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
-              <h3 className="text-lg font-bold text-gray-800">تفاصيل نوع البيانات</h3>
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-lg" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-foreground">تفاصيل نوع البيانات</h3>
             </div>
             <div className="p-5">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 rounded-xl bg-purple-50"><Fingerprint size={24} className="text-purple-500" /></div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-800">{selected.name}</h4>
-                  <p className="text-xs text-gray-500 font-mono">{selected.nameEn}</p>
+                  <h4 className="text-lg font-bold text-foreground">{selected.name}</h4>
+                  <p className="text-xs text-muted-foreground font-mono">{selected.nameEn}</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className={`text-xs font-bold px-2 py-1 rounded inline-block ${riskColors[selected.risk]}`}>{selected.risk}</div>
-                  <div className="text-xs text-gray-500 mt-1">الخطورة</div>
+                  <div className="text-xs text-muted-foreground mt-1">الخطورة</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className={`text-xs font-bold px-2 py-1 rounded inline-block ${categoryColors[selected.category]}`}>{selected.category}</div>
-                  <div className="text-xs text-gray-500 mt-1">الفئة</div>
+                  <div className="text-xs text-muted-foreground mt-1">الفئة</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className="text-lg font-bold text-teal-600">{selected.count}</div>
-                  <div className="text-xs text-gray-500 mt-1">حالات</div>
+                  <div className="text-xs text-muted-foreground mt-1">حالات</div>
                 </div>
               </div>
               <div className="mb-4">
-                <h5 className="text-sm font-semibold text-gray-700 mb-1">الوصف</h5>
-                <p className="text-sm text-gray-600 leading-relaxed">{selected.description}</p>
+                <h5 className="text-sm font-semibold text-foreground mb-1">الوصف</h5>
+                <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>
               </div>
               <div className="mb-4">
-                <h5 className="text-sm font-semibold text-gray-700 mb-1">أمثلة</h5>
+                <h5 className="text-sm font-semibold text-foreground mb-1">أمثلة</h5>
                 <div className="flex flex-wrap gap-2">
                   {selected.examples.map((ex, i) => (
-                    <span key={i} className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600 font-mono">{ex}</span>
+                    <span key={i} className="text-xs px-3 py-1 rounded-full bg-secondary text-muted-foreground font-mono">{ex}</span>
                   ))}
                 </div>
               </div>

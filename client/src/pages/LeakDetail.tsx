@@ -30,8 +30,8 @@ const sourceLabels: Record<string, string> = {
 function SourceUrlBlock({ sourceUrl }: { sourceUrl: string | null }) {
   if (!sourceUrl) return null;
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+    <div className="bg-card rounded-xl border border-border p-6">
+      <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
         <ExternalLink size={18} className="text-blue-500" />
         رابط المصدر
       </h3>
@@ -45,8 +45,8 @@ function SourceUrlBlock({ sourceUrl }: { sourceUrl: string | null }) {
 function DataTypesBlock({ dataTypes }: { dataTypes: unknown }) {
   if (!dataTypes || !Array.isArray(dataTypes) || dataTypes.length === 0) return null;
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+    <div className="bg-card rounded-xl border border-border p-6">
+      <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
         <FileText size={18} className="text-purple-500" />
         أنواع البيانات المسربة
       </h3>
@@ -80,12 +80,12 @@ export default function LeakDetail() {
       <div className="space-y-6" dir="rtl">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <button onClick={() => setLocation("/leaks")} className="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
-            <ArrowRight size={20} className="text-gray-600" />
+          <button onClick={() => setLocation("/leaks")} className="p-2 rounded-lg bg-card border border-border hover:bg-secondary transition-colors">
+            <ArrowRight size={20} className="text-muted-foreground" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">تفاصيل التسريب #{id}</h1>
-            <p className="text-sm text-gray-500">عرض تفصيلي للتسريب المكتشف</p>
+            <h1 className="text-2xl font-bold text-foreground">تفاصيل التسريب #{id}</h1>
+            <p className="text-sm text-muted-foreground">عرض تفصيلي للتسريب المكتشف</p>
           </div>
         </div>
 
@@ -97,9 +97,9 @@ export default function LeakDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Info */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-card rounded-xl border border-border p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                     <Shield size={20} className="text-red-500" />
                     {leak.title}
                   </h2>
@@ -107,36 +107,36 @@ export default function LeakDetail() {
                     {severityLabels[leak.severity]}
                   </span>
                 </div>
-                <p className="text-gray-600 leading-relaxed mb-6">{leak.description}</p>
+                <p className="text-muted-foreground leading-relaxed mb-6">{leak.description}</p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                  <div className="bg-secondary rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       <Database size={14} />
                       <span>السجلات المسربة</span>
                     </div>
-                    <span className="text-sm font-bold text-gray-800">{leak.dataCount?.toLocaleString()}</span>
+                    <span className="text-sm font-bold text-foreground">{leak.dataCount?.toLocaleString()}</span>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                  <div className="bg-secondary rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       <Globe size={14} />
                       <span>المصدر</span>
                     </div>
-                    <span className="text-sm font-medium text-gray-800">{sourceLabels[leak.source] || leak.source}</span>
+                    <span className="text-sm font-medium text-foreground">{sourceLabels[leak.source] || leak.source}</span>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                  <div className="bg-secondary rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       <Clock size={14} />
                       <span>الحالة</span>
                     </div>
-                    <span className="text-sm font-medium text-gray-800">{leak.status === 'new' ? 'جديد' : leak.status === 'investigating' ? 'قيد التحقيق' : leak.status === 'confirmed' ? 'مؤكد' : leak.status === 'resolved' ? 'تم الحل' : leak.status}</span>
+                    <span className="text-sm font-medium text-foreground">{leak.status === 'new' ? 'جديد' : leak.status === 'investigating' ? 'قيد التحقيق' : leak.status === 'confirmed' ? 'مؤكد' : leak.status === 'resolved' ? 'تم الحل' : leak.status}</span>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                  <div className="bg-secondary rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       <Calendar size={14} />
                       <span>تاريخ الاكتشاف</span>
                     </div>
-                    <span className="text-sm font-medium text-gray-800">{new Date(leak.discoveredAt).toLocaleDateString('ar-SA')}</span>
+                    <span className="text-sm font-medium text-foreground">{new Date(leak.discoveredAt).toLocaleDateString('ar-SA')}</span>
                   </div>
                 </div>
               </div>
@@ -150,21 +150,21 @@ export default function LeakDetail() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-bold text-gray-800 mb-4">معلومات إضافية</h3>
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-bold text-foreground mb-4">معلومات إضافية</h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <User size={16} className="text-gray-400" />
+                    <User size={16} className="text-muted-foreground" />
                     <div>
-                      <p className="text-xs text-gray-500">تم الاكتشاف بواسطة</p>
-                      <p className="text-sm font-medium text-gray-800">{'النظام'}</p>
+                      <p className="text-xs text-muted-foreground">تم الاكتشاف بواسطة</p>
+                      <p className="text-sm font-medium text-foreground">{'النظام'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MapPin size={16} className="text-gray-400" />
+                    <MapPin size={16} className="text-muted-foreground" />
                     <div>
-                      <p className="text-xs text-gray-500">القطاع</p>
-                      <p className="text-sm font-medium text-gray-800">قطاع #{leak.sectorId}</p>
+                      <p className="text-xs text-muted-foreground">القطاع</p>
+                      <p className="text-sm font-medium text-foreground">قطاع #{leak.sectorId}</p>
                     </div>
                   </div>
     
@@ -172,8 +172,8 @@ export default function LeakDetail() {
               </div>
 
               {/* Risk Score */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-bold text-gray-800 mb-4">تقييم المخاطر</h3>
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-bold text-foreground mb-4">تقييم المخاطر</h3>
                 <div className="flex items-center justify-center">
                   <div className="relative w-32 h-32">
                     <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
@@ -181,7 +181,7 @@ export default function LeakDetail() {
                       <circle cx="18" cy="18" r="16" fill="none" stroke={leak.severity === 'critical' ? '#ef4444' : leak.severity === 'high' ? '#f97316' : leak.severity === 'medium' ? '#eab308' : '#22c55e'} strokeWidth="3" strokeDasharray={`${(leak.severity === 'critical' ? 95 : leak.severity === 'high' ? 75 : leak.severity === 'medium' ? 50 : 25)} 100`} strokeLinecap="round" />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-gray-800">{leak.severity === 'critical' ? '95' : leak.severity === 'high' ? '75' : leak.severity === 'medium' ? '50' : '25'}%</span>
+                      <span className="text-2xl font-bold text-foreground">{leak.severity === 'critical' ? '95' : leak.severity === 'high' ? '75' : leak.severity === 'medium' ? '50' : '25'}%</span>
                     </div>
                   </div>
                 </div>
@@ -191,7 +191,7 @@ export default function LeakDetail() {
         ) : (
           <div className="text-center py-20">
             <AlertTriangle size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500">لم يتم العثور على التسريب</p>
+            <p className="text-muted-foreground">لم يتم العثور على التسريب</p>
           </div>
         )}
       </div>

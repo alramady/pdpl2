@@ -24,64 +24,64 @@ export default function VendorFiles() {
     <Layout title="ملفات البائعين" titleEn="Vendor Files">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-teal-600">{vendors.length}</div>
-          <div className="text-sm text-gray-500">جهات مهددة مرصودة</div>
+          <div className="text-sm text-muted-foreground">جهات مهددة مرصودة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-red-600">{vendors.filter(v => v.threat === "عالي").length}</div>
-          <div className="text-sm text-gray-500">تهديد عالي</div>
+          <div className="text-sm text-muted-foreground">تهديد عالي</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-amber-600">{vendors.reduce((s, v) => s + v.leaks, 0)}</div>
-          <div className="text-sm text-gray-500">تسريبات مرتبطة</div>
+          <div className="text-sm text-muted-foreground">تسريبات مرتبطة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-purple-600">4</div>
-          <div className="text-sm text-gray-500">منصات مراقبة</div>
+          <div className="text-sm text-muted-foreground">منصات مراقبة</div>
         </div>
       </div>
 
       {/* Vendor Cards */}
       <div className="space-y-4">
         {vendors.map((vendor) => (
-          <div key={vendor.id} onClick={() => setSelected(vendor)} className="rounded-xl p-5 border border-gray-100 hover:border-red-200 transition-all cursor-pointer bg-white hover:shadow-sm">
+          <div key={vendor.id} onClick={() => setSelected(vendor)} className="rounded-xl p-5 border border-border hover:border-red-200 transition-all cursor-pointer bg-card hover:shadow-sm">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <span className={`text-xs px-2 py-0.5 rounded border ${threatColors[vendor.threat]}`}>تهديد {vendor.threat}</span>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{vendor.type}</span>
+                <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded">{vendor.type}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <h4 className="text-base font-semibold text-gray-800">{vendor.name}</h4>
-                  <p className="text-xs text-gray-500">الأسماء المستعارة: {vendor.aliases.join(", ")}</p>
+                  <h4 className="text-base font-semibold text-foreground">{vendor.name}</h4>
+                  <p className="text-xs text-muted-foreground">الأسماء المستعارة: {vendor.aliases.join(", ")}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-red-50"><Users size={18} className="text-red-500" /></div>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-gray-50 text-center">
-                <div className="text-xs text-gray-500">تسريبات</div>
+              <div className="p-2 rounded-lg bg-secondary text-center">
+                <div className="text-xs text-muted-foreground">تسريبات</div>
                 <div className="text-sm font-semibold text-amber-600">{vendor.leaks}</div>
               </div>
-              <div className="p-2 rounded-lg bg-gray-50 text-center">
-                <div className="text-xs text-gray-500">أول ظهور</div>
-                <div className="text-xs font-semibold text-gray-800">{new Date(vendor.firstSeen).toLocaleDateString("ar-SA")}</div>
+              <div className="p-2 rounded-lg bg-secondary text-center">
+                <div className="text-xs text-muted-foreground">أول ظهور</div>
+                <div className="text-xs font-semibold text-foreground">{new Date(vendor.firstSeen).toLocaleDateString("ar-SA")}</div>
               </div>
-              <div className="p-2 rounded-lg bg-gray-50 text-center">
-                <div className="text-xs text-gray-500">آخر نشاط</div>
-                <div className="text-xs font-semibold text-gray-800">{new Date(vendor.lastSeen).toLocaleDateString("ar-SA")}</div>
+              <div className="p-2 rounded-lg bg-secondary text-center">
+                <div className="text-xs text-muted-foreground">آخر نشاط</div>
+                <div className="text-xs font-semibold text-foreground">{new Date(vendor.lastSeen).toLocaleDateString("ar-SA")}</div>
               </div>
-              <div className="p-2 rounded-lg bg-gray-50 text-center">
-                <div className="text-xs text-gray-500">المنصات</div>
-                <div className="text-xs font-semibold text-gray-800">{vendor.platforms.length}</div>
+              <div className="p-2 rounded-lg bg-secondary text-center">
+                <div className="text-xs text-muted-foreground">المنصات</div>
+                <div className="text-xs font-semibold text-foreground">{vendor.platforms.length}</div>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-teal-600">اضغط لعرض الملف الكامل ←</span>
               <div className="flex items-center gap-2">
                 {vendor.targets.map((t) => (
-                  <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-gray-100 text-gray-500">{t}</span>
+                  <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-secondary text-muted-foreground">{t}</span>
                 ))}
               </div>
             </div>
@@ -92,39 +92,39 @@ export default function VendorFiles() {
       {/* Detail Modal */}
       {selected && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-2xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()} dir="rtl">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
-              <h3 className="text-lg font-bold text-gray-800">ملف الجهة المهددة</h3>
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-2xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-foreground">ملف الجهة المهددة</h3>
             </div>
             <div className="p-5 overflow-y-auto max-h-[70vh]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 rounded-xl bg-red-50"><Users size={24} className="text-red-500" /></div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-800">{selected.name}</h4>
-                  <p className="text-xs text-gray-500">الأسماء المستعارة: {selected.aliases.join(", ")}</p>
+                  <h4 className="text-lg font-bold text-foreground">{selected.name}</h4>
+                  <p className="text-xs text-muted-foreground">الأسماء المستعارة: {selected.aliases.join(", ")}</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-5">
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className={`text-sm font-bold px-2 py-1 rounded inline-block ${threatColors[selected.threat]}`}>تهديد {selected.threat}</div>
-                  <div className="text-xs text-gray-500 mt-1">مستوى التهديد</div>
+                  <div className="text-xs text-muted-foreground mt-1">مستوى التهديد</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
-                  <div className="text-sm font-bold text-gray-800">{selected.type}</div>
-                  <div className="text-xs text-gray-500 mt-1">النوع</div>
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
+                  <div className="text-sm font-bold text-foreground">{selected.type}</div>
+                  <div className="text-xs text-muted-foreground mt-1">النوع</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className="text-sm font-bold text-amber-600">{selected.leaks}</div>
-                  <div className="text-xs text-gray-500 mt-1">تسريبات</div>
+                  <div className="text-xs text-muted-foreground mt-1">تسريبات</div>
                 </div>
               </div>
               <div className="mb-5">
-                <h5 className="text-sm font-semibold text-gray-700 mb-2">الوصف</h5>
-                <p className="text-sm text-gray-600 leading-relaxed">{selected.description}</p>
+                <h5 className="text-sm font-semibold text-foreground mb-2">الوصف</h5>
+                <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>
               </div>
               <div className="mb-5">
-                <h5 className="text-sm font-semibold text-gray-700 mb-2">المنصات النشطة</h5>
+                <h5 className="text-sm font-semibold text-foreground mb-2">المنصات النشطة</h5>
                 <div className="flex flex-wrap gap-2">
                   {selected.platforms.map((p) => (
                     <span key={p} className="text-xs px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200">{p}</span>
@@ -132,7 +132,7 @@ export default function VendorFiles() {
                 </div>
               </div>
               <div className="mb-5">
-                <h5 className="text-sm font-semibold text-gray-700 mb-2">القطاعات المستهدفة</h5>
+                <h5 className="text-sm font-semibold text-foreground mb-2">القطاعات المستهدفة</h5>
                 <div className="flex flex-wrap gap-2">
                   {selected.targets.map((t) => (
                     <span key={t} className="text-xs px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">{t}</span>
@@ -140,13 +140,13 @@ export default function VendorFiles() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                  <div className="text-xs text-gray-500">أول ظهور</div>
-                  <div className="text-sm font-bold text-gray-800">{new Date(selected.firstSeen).toLocaleDateString("ar-SA", { year: "numeric", month: "long" })}</div>
+                <div className="p-3 rounded-lg bg-secondary border border-border">
+                  <div className="text-xs text-muted-foreground">أول ظهور</div>
+                  <div className="text-sm font-bold text-foreground">{new Date(selected.firstSeen).toLocaleDateString("ar-SA", { year: "numeric", month: "long" })}</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                  <div className="text-xs text-gray-500">آخر نشاط</div>
-                  <div className="text-sm font-bold text-gray-800">{new Date(selected.lastSeen).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</div>
+                <div className="p-3 rounded-lg bg-secondary border border-border">
+                  <div className="text-xs text-muted-foreground">آخر نشاط</div>
+                  <div className="text-sm font-bold text-foreground">{new Date(selected.lastSeen).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</div>
                 </div>
               </div>
             </div>

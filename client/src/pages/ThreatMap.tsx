@@ -40,38 +40,38 @@ export default function ThreatMap() {
     <Layout title="خريطة التهديدات" titleEn="Threat Map">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-teal-600">{totalLeaks}</div>
-              <div className="text-sm text-gray-500">إجمالي التسريبات</div>
+              <div className="text-sm text-muted-foreground">إجمالي التسريبات</div>
             </div>
             <div className="p-2 rounded-lg bg-teal-50"><ShieldCheck size={20} className="text-teal-600" /></div>
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-red-600">{Math.floor(totalLeaks * 0.16)}</div>
-              <div className="text-sm text-gray-500">تسريبات واسعة النطاق</div>
+              <div className="text-sm text-muted-foreground">تسريبات واسعة النطاق</div>
             </div>
             <div className="p-2 rounded-lg bg-red-50"><AlertTriangle size={20} className="text-red-600" /></div>
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-purple-600">{Object.keys(regionPositions).length}</div>
-              <div className="text-sm text-gray-500">المناطق المتأثرة</div>
+              <div className="text-sm text-muted-foreground">المناطق المتأثرة</div>
             </div>
             <div className="p-2 rounded-lg bg-purple-50"><MapPin size={20} className="text-purple-600" /></div>
           </div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="flex items-center gap-3 justify-end">
             <div className="text-right">
               <div className="text-2xl font-bold text-amber-600">{(stats?.stats?.totalRecordsExposed || stats?.stats?.total_records_exposed || 245000000).toLocaleString()}</div>
-              <div className="text-sm text-gray-500">السجلات المتأثرة</div>
+              <div className="text-sm text-muted-foreground">السجلات المتأثرة</div>
             </div>
             <div className="p-2 rounded-lg bg-amber-50"><Database size={20} className="text-amber-600" /></div>
           </div>
@@ -80,8 +80,8 @@ export default function ThreatMap() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map */}
-        <div className="lg:col-span-2 rounded-xl p-5 border border-gray-100 bg-white">
-          <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2 justify-end">
+        <div className="lg:col-span-2 rounded-xl p-5 border border-border bg-card">
+          <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2 justify-end">
             خريطة التهديدات — المملكة العربية السعودية
             <Globe size={18} className="text-teal-600" />
           </h3>
@@ -108,27 +108,27 @@ export default function ThreatMap() {
             </svg>
           </div>
           <div className="flex items-center gap-4 mt-4 justify-center">
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-600" /><span className="text-xs text-gray-500">واسع النطاق</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-400" /><span className="text-xs text-gray-500">مرتفع</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-amber-400" /><span className="text-xs text-gray-500">متوسط</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-teal-500" /><span className="text-xs text-gray-500">محدد</span></div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-600" /><span className="text-xs text-muted-foreground">واسع النطاق</span></div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-400" /><span className="text-xs text-muted-foreground">مرتفع</span></div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-amber-400" /><span className="text-xs text-muted-foreground">متوسط</span></div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-teal-500" /><span className="text-xs text-muted-foreground">محدد</span></div>
           </div>
         </div>
 
         {/* Region Ranking */}
-        <div className="rounded-xl p-5 border border-gray-100 bg-white">
-          <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="rounded-xl p-5 border border-border bg-card">
+          <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
             <AlertTriangle size={16} className="text-amber-500" />
             ترتيب المناطق حسب التسريبات
           </h3>
           <div className="space-y-4">
             {regionData.sort((a, b) => b.count - a.count).map((region) => (
-              <div key={region.name} onClick={() => setSelectedRegion(region.name)} className={`pb-3 border-b border-gray-100 last:border-0 cursor-pointer rounded-lg p-2 transition-colors ${selectedRegion === region.name ? "bg-teal-50 border-teal-200" : "hover:bg-gray-50"}`}>
+              <div key={region.name} onClick={() => setSelectedRegion(region.name)} className={`pb-3 border-b border-border last:border-0 cursor-pointer rounded-lg p-2 transition-colors ${selectedRegion === region.name ? "bg-teal-50 border-teal-200" : "hover:bg-secondary"}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500">{region.count} تسريب</span>
-                  <span className="text-sm font-semibold text-gray-800">{region.name}</span>
+                  <span className="text-xs text-muted-foreground">{region.count} تسريب</span>
+                  <span className="text-sm font-semibold text-foreground">{region.name}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-secondary overflow-hidden">
                   <div className="h-full rounded-full bg-gradient-to-l from-red-500 to-amber-500" style={{ width: `${(region.count / Math.max(...regionData.map(r => r.count))) * 100}%` }} />
                 </div>
               </div>
@@ -140,42 +140,42 @@ export default function ThreatMap() {
       {/* Region Detail Modal */}
       {selectedData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedRegion(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} dir="rtl">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl">
-              <button onClick={() => setSelectedRegion(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
-              <h3 className="text-lg font-bold text-gray-800">تفاصيل المنطقة</h3>
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-lg max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 bg-card rounded-t-2xl">
+              <button onClick={() => setSelectedRegion(null)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-foreground">تفاصيل المنطقة</h3>
             </div>
             <div className="p-5">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 rounded-xl bg-red-50"><MapPin size={24} className="text-red-600" /></div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-800">{selectedData.name}</h4>
-                  <p className="text-xs text-gray-500">{selectedData.count} تسريب مرصود</p>
+                  <h4 className="text-lg font-bold text-foreground">{selectedData.name}</h4>
+                  <p className="text-xs text-muted-foreground">{selectedData.count} تسريب مرصود</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-center">
                   <div className="text-lg font-bold text-red-600">{Math.floor(selectedData.count * 0.3)}</div>
-                  <div className="text-xs text-gray-500">حرج</div>
+                  <div className="text-xs text-muted-foreground">حرج</div>
                 </div>
                 <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 text-center">
                   <div className="text-lg font-bold text-amber-600">{Math.floor(selectedData.count * 0.4)}</div>
-                  <div className="text-xs text-gray-500">عالي</div>
+                  <div className="text-xs text-muted-foreground">عالي</div>
                 </div>
                 <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 text-center">
                   <div className="text-lg font-bold text-blue-600">{Math.floor(selectedData.count * 0.3)}</div>
-                  <div className="text-xs text-gray-500">متوسط</div>
+                  <div className="text-xs text-muted-foreground">متوسط</div>
                 </div>
               </div>
-              <h5 className="text-sm font-semibold text-gray-700 mb-2">أحدث الحوادث في المنطقة</h5>
+              <h5 className="text-sm font-semibold text-foreground mb-2">أحدث الحوادث في المنطقة</h5>
               <div className="space-y-2">
                 {(selectedData.incidents.length > 0 ? selectedData.incidents.slice(0, 5) : incidents.slice(0, 5)).map((inc: any) => (
-                  <div key={inc.id} className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                  <div key={inc.id} className="p-3 rounded-lg bg-secondary border border-border">
                     <div className="flex items-center justify-between">
                       <span className={`text-xs px-2 py-0.5 rounded ${inc.severity === "حرج" ? "bg-red-100 text-red-700" : inc.severity === "عالي" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>{inc.severity}</span>
-                      <span className="text-sm font-medium text-gray-800">{inc.title}</span>
+                      <span className="text-sm font-medium text-foreground">{inc.title}</span>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1 text-right">{inc.sector} · {inc.discoveredAt ? new Date(inc.discoveredAt).toLocaleDateString("ar-SA") : ""}</div>
+                    <div className="text-xs text-muted-foreground mt-1 text-right">{inc.sector} · {inc.discoveredAt ? new Date(inc.discoveredAt).toLocaleDateString("ar-SA") : ""}</div>
                   </div>
                 ))}
               </div>

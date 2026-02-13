@@ -76,18 +76,18 @@ export default function SmartRasid() {
   return (
     <Layout title="راصد الذكي" titleEn="Smart Rasid">
       {/* Top Bar */}
-      <div className="rounded-xl p-3 mb-4 border border-gray-100 flex items-center justify-between bg-white">
+      <div className="rounded-xl p-3 mb-4 border border-border flex items-center justify-between bg-card">
         <div className="flex items-center gap-2">
           <button onClick={() => { setMessages([]); }} className="flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs hover:bg-teal-100 border border-teal-200">
             <Plus size={12} /> NEW_SESSION
           </button>
           <div className="h-4 w-px bg-gray-200" />
-          <button onClick={() => setIsMuted(!isMuted)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={() => setIsMuted(!isMuted)} className="p-1.5 rounded-lg hover:bg-secondary text-gray-400">
             {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
           </button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><Save size={14} /></button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><Download size={14} /></button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><History size={14} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-secondary text-gray-400"><Save size={14} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-secondary text-gray-400"><Download size={14} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-secondary text-gray-400"><History size={14} /></button>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-gray-400">26 أداة</span>
@@ -104,14 +104,14 @@ export default function SmartRasid() {
       {/* Quick Commands */}
       <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
         {quickCommands.map((cmd) => (
-          <button key={cmd} onClick={() => sendMessage(cmd)} className="flex-shrink-0 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-colors">
+          <button key={cmd} onClick={() => sendMessage(cmd)} className="flex-shrink-0 px-3 py-1.5 bg-card border border-border rounded-lg text-xs text-muted-foreground hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-colors">
             {cmd}
           </button>
         ))}
       </div>
 
       {/* Main Chat Area */}
-      <div className="rounded-xl border border-gray-200 overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0f1e 0%, #0d1420 50%, #0a0f1e 100%)" }}>
+      <div className="rounded-xl border border-border overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0f1e 0%, #0d1420 50%, #0a0f1e 100%)" }}>
         {!hasMessages ? (
           <>
             {/* AI Avatar & Info */}
@@ -132,7 +132,7 @@ export default function SmartRasid() {
               <p className="text-sm text-gray-400 mb-6">كبير محللي حماية البيانات الشخصية — يحلل، يستنتج، يربط، وينفذ</p>
               <div className="flex items-center justify-center gap-1 mb-8">
                 {tabs.map((tab, i) => (
-                  <span key={tab} className={`text-xs px-3 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? "bg-teal-500/20 text-teal-400 border border-teal-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}>
+                  <span key={tab} className={`text-xs px-3 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? "bg-teal-500/20 text-teal-400 border border-teal-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-card/5"}`}>
                     {i === 0 && "→ "}{tab}
                   </span>
                 ))}
@@ -140,12 +140,12 @@ export default function SmartRasid() {
               <div className="max-w-3xl mx-auto">
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                   {capabilities.map((cap) => (
-                    <div key={cap.name} onClick={() => sendMessage(cap.name)} className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-teal-500/20 hover:bg-teal-500/5 transition-all cursor-pointer text-center group">
+                    <div key={cap.name} onClick={() => sendMessage(cap.name)} className="p-3 rounded-lg bg-card/[0.03] border border-white/[0.06] hover:border-teal-500/20 hover:bg-teal-500/5 transition-all cursor-pointer text-center group">
                       <div className="flex items-center justify-center mb-2">
                         <span className="text-gray-500 group-hover:text-teal-400 transition-colors">{cap.icon}</span>
                       </div>
                       <span className="text-[11px] font-medium text-gray-300 block">{cap.name}</span>
-                      <p className="text-[9px] text-gray-600 mt-0.5">{cap.desc}</p>
+                      <p className="text-[9px] text-muted-foreground mt-0.5">{cap.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -161,7 +161,7 @@ export default function SmartRasid() {
                     <Bot size={16} className="text-teal-400" />
                   </div>
                 )}
-                <div className={`max-w-[70%] rounded-xl px-4 py-3 ${msg.role === "user" ? "bg-teal-500/20 text-teal-100" : "bg-white/[0.05] text-gray-200"}`}>
+                <div className={`max-w-[70%] rounded-xl px-4 py-3 ${msg.role === "user" ? "bg-teal-500/20 text-teal-100" : "bg-card/[0.05] text-gray-200"}`}>
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                   <p className="text-[10px] text-gray-500 mt-1">{msg.timestamp.toLocaleTimeString("ar-SA")}</p>
                 </div>
@@ -172,7 +172,7 @@ export default function SmartRasid() {
                 <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                   <Bot size={16} className="text-teal-400" />
                 </div>
-                <div className="bg-white/[0.05] rounded-xl px-4 py-3">
+                <div className="bg-card/[0.05] rounded-xl px-4 py-3">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                     <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -187,7 +187,7 @@ export default function SmartRasid() {
 
         {/* Input */}
         <div className="p-4 border-t border-white/[0.06]">
-          <div className="flex items-center gap-3 bg-white/[0.03] rounded-lg px-4 py-3 border border-white/[0.06]">
+          <div className="flex items-center gap-3 bg-card/[0.03] rounded-lg px-4 py-3 border border-white/[0.06]">
             <span className="text-teal-400 text-sm font-mono">{">_"}</span>
             <input
               type="text"
@@ -207,8 +207,8 @@ export default function SmartRasid() {
             </button>
           </div>
           <div className="flex items-center justify-between mt-2 px-1">
-            <span className="text-[10px] text-gray-600 font-mono">Enter ↵ · Shift+Enter ⏎</span>
-            <span className="text-[10px] text-gray-600 font-mono">SMART_RASID v6.0 // 26 TOOLS · 7 AGENTS</span>
+            <span className="text-[10px] text-muted-foreground font-mono">Enter ↵ · Shift+Enter ⏎</span>
+            <span className="text-[10px] text-muted-foreground font-mono">SMART_RASID v6.0 // 26 TOOLS · 7 AGENTS</span>
           </div>
         </div>
       </div>

@@ -83,10 +83,10 @@ export default function LiveMonitoring() {
   return (
     <Layout title="الرصد المباشر" titleEn="Live Monitoring">
       {/* Header */}
-      <div className="rounded-xl p-5 mb-6 bg-white border border-gray-100">
+      <div className="rounded-xl p-5 mb-6 bg-card border border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => setIsLive(!isLive)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isLive ? "bg-green-100 text-green-700 border border-green-200" : "bg-gray-100 text-gray-600 border border-gray-200"}`}>
+            <button onClick={() => setIsLive(!isLive)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isLive ? "bg-green-100 text-green-700 border border-green-200" : "bg-secondary text-muted-foreground border border-border"}`}>
               {isLive ? <Wifi size={14} /> : <WifiOff size={14} />}
               {isLive ? "● مباشر" : "○ متوقف"}
             </button>
@@ -94,8 +94,8 @@ export default function LiveMonitoring() {
           </div>
           <div className="text-right flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2 justify-end">الرصد المباشر <Activity size={20} className="text-green-500" /></h2>
-              <p className="text-sm text-gray-500">تتبع الأحداث والتنبيهات في الوقت الفعلي</p>
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2 justify-end">الرصد المباشر <Activity size={20} className="text-green-500" /></h2>
+              <p className="text-sm text-muted-foreground">تتبع الأحداث والتنبيهات في الوقت الفعلي</p>
             </div>
           </div>
         </div>
@@ -103,47 +103,47 @@ export default function LiveMonitoring() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-teal-600">{logs.length}</div>
-          <div className="text-sm text-gray-500">أحداث مسجلة</div>
+          <div className="text-sm text-muted-foreground">أحداث مسجلة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-red-600">{logs.filter(l => l.severity === "حرج").length}</div>
-          <div className="text-sm text-gray-500">حرجة</div>
+          <div className="text-sm text-muted-foreground">حرجة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-orange-600">{logs.filter(l => l.severity === "عالي").length}</div>
-          <div className="text-sm text-gray-500">عالية</div>
+          <div className="text-sm text-muted-foreground">عالية</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+        <div className="rounded-xl p-4 border border-border bg-card">
           <div className="text-2xl font-bold text-green-600">{logs.filter(l => l.severity === "معلومات").length}</div>
-          <div className="text-sm text-gray-500">معلومات</div>
+          <div className="text-sm text-muted-foreground">معلومات</div>
         </div>
       </div>
 
       {/* Log Stream */}
-      <div className="rounded-xl border border-gray-100 bg-white overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <button onClick={() => setLogs(initialLogs)} className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg text-xs text-gray-600 hover:bg-gray-200"><RefreshCw size={12} /> تحديث</button>
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <button onClick={() => setLogs(initialLogs)} className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-lg text-xs text-muted-foreground hover:bg-gray-200"><RefreshCw size={12} /> تحديث</button>
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isLive ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
-            <span className="text-sm font-semibold text-gray-800">البث المباشر</span>
+            <span className="text-sm font-semibold text-foreground">البث المباشر</span>
           </div>
         </div>
         <div className="divide-y divide-gray-50">
           {logs.map((log) => (
-            <div key={log.id} onClick={() => setSelected(log)} className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer border-r-2 ${
+            <div key={log.id} onClick={() => setSelected(log)} className={`p-4 hover:bg-secondary transition-colors cursor-pointer border-r-2 ${
               log.severity === "حرج" ? "border-r-red-500" : log.severity === "عالي" ? "border-r-orange-500" : log.severity === "متوسط" ? "border-r-amber-500" : "border-r-blue-500"
             }`}>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <span className={`text-[10px] px-2 py-0.5 rounded ${severityColors[log.severity] || "bg-gray-100 text-gray-600"}`}>{log.type}</span>
-                  <span className="text-xs text-gray-500">{log.source}</span>
-                  <span className="text-xs text-gray-400 font-mono">{new Date(log.timestamp).toLocaleTimeString("ar-SA")}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded ${severityColors[log.severity] || "bg-secondary text-muted-foreground"}`}>{log.type}</span>
+                  <span className="text-xs text-muted-foreground">{log.source}</span>
+                  <span className="text-xs text-muted-foreground font-mono">{new Date(log.timestamp).toLocaleTimeString("ar-SA")}</span>
                 </div>
                 <div className="text-right flex-1 mr-4">
-                  <span className="text-sm text-gray-700">{sourceIcons[log.source]} {log.message}</span>
-                  <div className="text-xs text-gray-400 mt-0.5">{log.channel}</div>
+                  <span className="text-sm text-foreground">{sourceIcons[log.source]} {log.message}</span>
+                  <div className="text-xs text-muted-foreground mt-0.5">{log.channel}</div>
                 </div>
               </div>
             </div>
@@ -154,29 +154,29 @@ export default function LiveMonitoring() {
       {/* Detail Modal */}
       {selected && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg" onClick={e => e.stopPropagation()} dir="rtl">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
-              <h3 className="text-lg font-bold text-gray-800">تفاصيل الحدث</h3>
+          <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-lg" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-foreground">تفاصيل الحدث</h3>
             </div>
             <div className="p-5">
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className={`text-xs font-bold px-2 py-1 rounded inline-block ${severityColors[selected.severity]}`}>{selected.severity}</div>
-                  <div className="text-xs text-gray-500 mt-1">الخطورة</div>
+                  <div className="text-xs text-muted-foreground mt-1">الخطورة</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
                   <div className="text-sm">{sourceIcons[selected.source]} {selected.source}</div>
-                  <div className="text-xs text-gray-500 mt-1">المصدر</div>
+                  <div className="text-xs text-muted-foreground mt-1">المصدر</div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
-                  <div className="text-xs font-bold text-gray-800">{selected.channel}</div>
-                  <div className="text-xs text-gray-500 mt-1">القناة</div>
+                <div className="p-3 rounded-lg bg-secondary border border-border text-center">
+                  <div className="text-xs font-bold text-foreground">{selected.channel}</div>
+                  <div className="text-xs text-muted-foreground mt-1">القناة</div>
                 </div>
               </div>
-              <h4 className="text-sm font-semibold text-gray-800 mb-2">{selected.message}</h4>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">{selected.details}</p>
-              <div className="text-xs text-gray-400">{new Date(selected.timestamp).toLocaleString("ar-SA")}</div>
+              <h4 className="text-sm font-semibold text-foreground mb-2">{selected.message}</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{selected.details}</p>
+              <div className="text-xs text-muted-foreground">{new Date(selected.timestamp).toLocaleString("ar-SA")}</div>
             </div>
           </div>
         </div>
