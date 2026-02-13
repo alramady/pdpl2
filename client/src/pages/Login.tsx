@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 import { Lock, Eye, EyeOff, Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
+import { getLoginUrl } from "@/const";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663296955420/tSiomIdoNdNFAtOB.png";
 const CHARACTER_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663296955420/qoUheMlVnqPiZdQe.png";
 
-export default function Login({ onLogin }: { onLogin: () => void }) {
-  const [, setLocation] = useLocation();
+export default function Login() {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -38,17 +37,8 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    setTimeout(() => {
-      if (userId === "MRUHAILY" && password === "15001500") {
-        toast.success("تم تسجيل الدخول بنجاح", { description: "مرحباً Admin Rasid System" });
-        onLogin();
-        setLocation("/");
-      } else {
-        toast.error("خطأ في تسجيل الدخول", { description: "تأكد من اسم المستخدم وكلمة المرور" });
-      }
-      setLoading(false);
-    }, 1000);
+    // Redirect to OAuth login
+    window.location.href = getLoginUrl();
   };
 
   return (
@@ -61,7 +51,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
         {isDark ? <Sun size={18} /> : <Moon size={18} />}
       </button>
 
-      {/* Character Image - Bottom Right */}
+      {/* Character Image */}
       <img
         src={CHARACTER_URL}
         alt="راصد"
@@ -69,7 +59,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
         style={{ zIndex: 0 }}
       />
 
-      {/* Floating Dots Animation */}
+      {/* Floating Dots */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(8)].map((_, i) => (
           <div
@@ -89,12 +79,11 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
       </div>
 
       <div className="min-h-screen flex flex-col items-center justify-center px-4 relative z-10">
-        {/* Logo Image */}
+        {/* Logo */}
         <div className="mb-4">
-          <img src={LOGO_URL} alt="منصة راصد - مكتب إدارة البيانات الوطنية" className="h-28 mx-auto" />
+          <img src={LOGO_URL} alt="منصة راصد" className="h-28 mx-auto" />
         </div>
 
-        {/* Subtitle */}
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">منصة رصد تسريبات البيانات الشخصية</p>
 
         {/* Login Card */}
@@ -114,7 +103,6 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
                 placeholder="أدخل اسم المستخدم"
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all text-right"
                 dir="rtl"
-                required
               />
             </div>
 
@@ -128,7 +116,6 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
                   placeholder="أدخل كلمة المرور"
                   className="w-full px-4 py-3 pr-4 pl-12 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all text-right"
                   dir="rtl"
-                  required
                 />
                 <button
                   type="button"
@@ -167,12 +154,10 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
           </form>
         </div>
 
-        {/* Warning */}
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-6 text-center max-w-md leading-relaxed">
           هذا النظام مخصص للمستخدمين المصرح لهم فقط. أي محاولة وصول غير مصرح بها ستتم مراقبتها وتسجيلها.
         </p>
 
-        {/* Footer */}
         <p className="text-xs text-gray-400 dark:text-gray-600 mt-4">
           مكتب إدارة البيانات الوطنية — منصة راصد
         </p>

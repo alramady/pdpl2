@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Layout from "@/components/Layout";
-import { Bot, Send, Volume2, VolumeX, Save, Download, History, Plus, BarChart3, AlertTriangle, Link2, Shield, Users, Map, FileText, Crosshair, ChevronLeft, Brain, Eye, Bell, TrendingUp, UserCircle } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { Bot, Send, Volume2, VolumeX, Save, Download, History, Plus, BarChart3, AlertTriangle, Link2, Shield, Users, Eye, Bell, TrendingUp, UserCircle, Brain, FileText, Crosshair } from "lucide-react";
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+}
 
 const capabilities = [
   { name: "تحليل لوحة القيادة", desc: "إحصائيات وتقارير شاملة", icon: <BarChart3 size={16} /> },
@@ -36,119 +43,147 @@ const tabs = ["RASID", "تنفيذي", "تحليلات", "مراجعة", "معر
 export default function SmartRasid() {
   const [message, setMessage] = useState("");
   const [isMuted, setIsMuted] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const aiChat = trpc.ai.chat.useMutation();
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async (text: string) => {
+    if (!text.trim()) return;
+    const userMsg: ChatMessage = { role: "user", content: text, timestamp: new Date() };
+    setMessages(prev => [...prev, userMsg]);
+    setMessage("");
+    setIsTyping(true);
+
+    try {
+      const result = await aiChat.mutateAsync({ message: text });
+      const assistantMsg: ChatMessage = { role: "assistant", content: String(result.response || ""), timestamp: new Date() };
+      setMessages(prev => [...prev, assistantMsg]);
+    } catch {
+      const errorMsg: ChatMessage = { role: "assistant", content: "عذراً، حدث خطأ في المعالجة. يرجى المحاولة مرة أخرى.", timestamp: new Date() };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const hasMessages = messages.length > 0;
 
   return (
     <Layout title="راصد الذكي" titleEn="Smart Rasid">
       {/* Top Bar */}
-      <div className="rounded-xl p-3 mb-4 border border-gray-100 dark:border-white/5 flex items-center justify-between bg-white dark:bg-[#111827]">
+      <div className="rounded-xl p-3 mb-4 border border-gray-100 flex items-center justify-between bg-white">
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1 px-3 py-1.5 bg-teal-50 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 rounded-lg text-xs hover:bg-teal-100 dark:hover:bg-teal-500/30 border border-teal-200 dark:border-teal-500/30">
-            <Plus size={12} />
-            NEW_SESSION
+          <button onClick={() => { setMessages([]); }} className="flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs hover:bg-teal-100 border border-teal-200">
+            <Plus size={12} /> NEW_SESSION
           </button>
-          <button className="flex items-center gap-1 px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg">
-            CMD {">"}
-          </button>
-          <div className="h-4 w-px bg-gray-200 dark:bg-white/10" />
-          <button onClick={() => setIsMuted(!isMuted)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400" title={isMuted ? "تشغيل الصوت" : "كتم الصوت"}>
+          <div className="h-4 w-px bg-gray-200" />
+          <button onClick={() => setIsMuted(!isMuted)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
             {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
           </button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400" title="حفظ">
-            <Save size={14} />
-          </button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400" title="تصدير">
-            <Download size={14} />
-          </button>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400" title="سجل">
-            <History size={14} />
-          </button>
+          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><Save size={14} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><Download size={14} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><History size={14} /></button>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-gray-400">26 أداة</span>
           <span className="text-xs text-gray-300">|</span>
           <span className="flex items-center gap-1 text-xs text-green-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            ONLINE
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> ONLINE
           </span>
           <span className="text-[10px] font-mono text-gray-400">SMART_RASID // 26 TOOLS · 7 AGENTS · ACTIVE</span>
-          <span className="text-sm font-bold text-teal-600 dark:text-teal-400">راصد الذكي</span>
-          <span className="text-[10px] text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded font-mono">v6.0</span>
+          <span className="text-sm font-bold text-teal-600">راصد الذكي</span>
+          <span className="text-[10px] text-teal-600 bg-teal-50 px-2 py-0.5 rounded font-mono">v6.0</span>
         </div>
       </div>
 
-      {/* Quick Commands Scrollbar */}
+      {/* Quick Commands */}
       <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
         {quickCommands.map((cmd) => (
-          <button
-            key={cmd}
-            onClick={() => setMessage(cmd)}
-            className="flex-shrink-0 px-3 py-1.5 bg-white dark:bg-[#111827] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-500/10 hover:border-teal-300 dark:hover:border-teal-500/30 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-          >
+          <button key={cmd} onClick={() => sendMessage(cmd)} className="flex-shrink-0 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-colors">
             {cmd}
           </button>
         ))}
       </div>
 
-      {/* Main Chat Area - DARK background like original */}
-      <div className="rounded-xl border border-gray-200 dark:border-white/5 overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0f1e 0%, #0d1420 50%, #0a0f1e 100%)" }}>
-        {/* AI Avatar & Info */}
-        <div className="p-10 text-center">
-          <div className="relative inline-block mb-6">
-            {/* Animated ring */}
-            <div className="w-28 h-28 rounded-full border-2 border-teal-500/30 flex items-center justify-center mx-auto relative">
-              <div className="absolute inset-0 rounded-full border border-teal-500/10 animate-ping" style={{ animationDuration: "3s" }} />
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-900/40 to-cyan-900/40 flex items-center justify-center">
-                <Bot size={44} className="text-teal-400" />
+      {/* Main Chat Area */}
+      <div className="rounded-xl border border-gray-200 overflow-hidden" style={{ background: "linear-gradient(180deg, #0a0f1e 0%, #0d1420 50%, #0a0f1e 100%)" }}>
+        {!hasMessages ? (
+          <>
+            {/* AI Avatar & Info */}
+            <div className="p-10 text-center">
+              <div className="relative inline-block mb-6">
+                <div className="w-28 h-28 rounded-full border-2 border-teal-500/30 flex items-center justify-center mx-auto relative">
+                  <div className="absolute inset-0 rounded-full border border-teal-500/10 animate-ping" style={{ animationDuration: "3s" }} />
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-900/40 to-cyan-900/40 flex items-center justify-center">
+                    <Bot size={44} className="text-teal-400" />
+                  </div>
+                </div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-[#0a0f1e] flex items-center justify-center">
+                  <span className="text-[8px] text-white font-bold">✓</span>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-1">راصد الذكي</h2>
+              <p className="text-xs text-gray-500 font-mono mb-2">_ SMART RASID AI ASSISTANT _</p>
+              <p className="text-sm text-gray-400 mb-6">كبير محللي حماية البيانات الشخصية — يحلل، يستنتج، يربط، وينفذ</p>
+              <div className="flex items-center justify-center gap-1 mb-8">
+                {tabs.map((tab, i) => (
+                  <span key={tab} className={`text-xs px-3 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? "bg-teal-500/20 text-teal-400 border border-teal-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}>
+                    {i === 0 && "→ "}{tab}
+                  </span>
+                ))}
+              </div>
+              <div className="max-w-3xl mx-auto">
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                  {capabilities.map((cap) => (
+                    <div key={cap.name} onClick={() => sendMessage(cap.name)} className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-teal-500/20 hover:bg-teal-500/5 transition-all cursor-pointer text-center group">
+                      <div className="flex items-center justify-center mb-2">
+                        <span className="text-gray-500 group-hover:text-teal-400 transition-colors">{cap.icon}</span>
+                      </div>
+                      <span className="text-[11px] font-medium text-gray-300 block">{cap.name}</span>
+                      <p className="text-[9px] text-gray-600 mt-0.5">{cap.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-[#0a0f1e] flex items-center justify-center">
-              <span className="text-[8px] text-white font-bold">✓</span>
-            </div>
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-1">راصد الذكي</h2>
-          <p className="text-xs text-gray-500 font-mono mb-2">_ SMART RASID AI ASSISTANT _</p>
-          <p className="text-sm text-gray-400 mb-6">كبير محللي حماية البيانات الشخصية — يحلل، يستنتج، يربط، وينفذ</p>
-
-          {/* Tabs */}
-          <div className="flex items-center justify-center gap-1 mb-8">
-            {tabs.map((tab, i) => (
-              <span key={tab} className={`text-xs px-3 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? "bg-teal-500/20 text-teal-400 border border-teal-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}>
-                {i === 0 && "→ "}{tab}
-              </span>
-            ))}
-          </div>
-
-          {/* Capabilities Grid */}
-          <div className="max-w-3xl mx-auto">
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-              {capabilities.map((cap) => (
-                <div key={cap.name} className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-teal-500/20 hover:bg-teal-500/5 transition-all cursor-pointer text-center group">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-gray-500 group-hover:text-teal-400 transition-colors">{cap.icon}</span>
+          </>
+        ) : (
+          <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto" dir="rtl">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                {msg.role === "assistant" && (
+                  <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
+                    <Bot size={16} className="text-teal-400" />
                   </div>
-                  <span className="text-[11px] font-medium text-gray-300 block">{cap.name}</span>
-                  <p className="text-[9px] text-gray-600 mt-0.5">{cap.desc}</p>
+                )}
+                <div className={`max-w-[70%] rounded-xl px-4 py-3 ${msg.role === "user" ? "bg-teal-500/20 text-teal-100" : "bg-white/[0.05] text-gray-200"}`}>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-[10px] text-gray-500 mt-1">{msg.timestamp.toLocaleTimeString("ar-SA")}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="px-6 pb-4">
-          <p className="text-[10px] text-gray-600 text-center mb-3 font-mono">// ابدأ بأحد هذه الأوامر أو اكتب أي سؤال</p>
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            {quickCommands.slice(0, 4).map((cmd) => (
-              <button
-                key={cmd}
-                onClick={() => setMessage(cmd)}
-                className="px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-sm text-gray-400 hover:bg-teal-500/10 hover:border-teal-500/30 hover:text-teal-400 transition-all"
-              >
-                {cmd}
-              </button>
+              </div>
             ))}
+            {isTyping && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
+                  <Bot size={16} className="text-teal-400" />
+                </div>
+                <div className="bg-white/[0.05] rounded-xl px-4 py-3">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
           </div>
-        </div>
+        )}
 
         {/* Input */}
         <div className="p-4 border-t border-white/[0.06]">
@@ -162,12 +197,12 @@ export default function SmartRasid() {
               className="flex-1 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
               dir="rtl"
               onKeyDown={(e) => {
-                if (e.key === "Enter" && message.trim()) {
-                  setMessage("");
+                if (e.key === "Enter" && message.trim() && !isTyping) {
+                  sendMessage(message);
                 }
               }}
             />
-            <button className="p-2 rounded-lg bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 transition-colors">
+            <button onClick={() => sendMessage(message)} disabled={!message.trim() || isTyping} className="p-2 rounded-lg bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 transition-colors disabled:opacity-50">
               <Send size={14} />
             </button>
           </div>

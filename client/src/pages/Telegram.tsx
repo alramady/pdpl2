@@ -1,188 +1,184 @@
+import { useState } from "react";
 import Layout from "@/components/Layout";
-import { telegramChannels } from "@/lib/data";
-import { Send, Search, RefreshCw, Filter, Eye, Users, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
+import { Send, Shield, AlertTriangle, Eye, Search, ChevronLeft, ChevronRight, X, Users } from "lucide-react";
 
-const impactColors: Record<string, string> = {
-  "عالي": "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30",
-  "متوسط": "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30",
-  "محدود": "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30"
-};
-
-const telegramLeaks = [
-  { id: "LK-2026-0170", title: "تسريب بيانات متقدمين من منصة جدارات - 421,076 سيرة ذاتية", sector: "التوظيف والموارد البشرية", records: 421076, impact: "عالي", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK5HZWM", title: "قاعدة بيانات عملاء التجارة الإلكترونية", sector: "قطاع التجزئة", records: 33412, impact: "متوسط", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK5HZKT", title: "بيانات مشتركي الاتصالات", sector: "قطاع الاتصالات", records: 26148, impact: "عالي", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK3W4KH", title: "قاعدة بيانات عملاء التجارة الإلكترونية", sector: "قطاع التجزئة", records: 34450, impact: "متوسط", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK3CU6F", title: "بيانات مشتركي الاتصالات", sector: "قطاع الاتصالات", records: 26780, impact: "عالي", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK2TMJ9", title: "بيانات مشتركي الاتصالات", sector: "قطاع الاتصالات", records: 24820, impact: "عالي", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK1R0XY", title: "قاعدة بيانات عملاء التجارة الإلكترونية", sector: "قطاع التجزئة", records: 31206, impact: "متوسط", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK17O0R", title: "تسريب بيانات اعتماد مصرفية سعودية", sector: "القطاع المصرفي", records: 18600, impact: "واسع النطاق", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLK053GZ", title: "دليل موظفي القطاع الحكومي", sector: "القطاع الحكومي", records: 7716, impact: "واسع النطاق", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJZLT0Z", title: "دليل موظفي القطاع الحكومي", sector: "القطاع الحكومي", records: 6609, impact: "واسع النطاق", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJYJ84Z", title: "دليل موظفي القطاع الحكومي", sector: "القطاع الحكومي", records: 9106, impact: "واسع النطاق", date: "١٣‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJWXCW0", title: "تسريب بيانات اعتماد مصرفية سعودية", sector: "القطاع المصرفي", records: 18671, impact: "واسع النطاق", date: "١٢‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJTPM5G", title: "تسريب بيانات اعتماد مصرفية سعودية", sector: "القطاع المصرفي", records: 17786, impact: "واسع النطاق", date: "١٢‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJT6BO3", title: "سجلات مرضى قطاع الصحة", sector: "القطاع الصحي", records: 9862, impact: "عالي", date: "١٢‏/٢‏/٢٠٢٦" },
-  { id: "LK-MLJRKH33", title: "بيانات مشتركي الاتصالات", sector: "قطاع الاتصالات", records: 24090, impact: "عالي", date: "١٢‏/٢‏/٢٠٢٦" },
-];
-
-const impactBadgeColors: Record<string, string> = {
-  "عالي": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+const threatColors: Record<string, string> = {
+  "حرج": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+  "عالي": "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400",
   "متوسط": "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
-  "واسع النطاق": "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400",
-  "محدود": "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
+  "منخفض": "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400",
 };
 
 export default function Telegram() {
-  const activeChannels = telegramChannels.filter(c => c.status === "نشط").length;
-  const totalLeaks = telegramChannels.reduce((sum, c) => sum + c.leaks, 0);
-  const highImpact = telegramChannels.filter(c => c.impact === "عالي").length;
+  const [page, setPage] = useState(0);
+  const [threatLevel, setThreatLevel] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [selected, setSelected] = useState<any>(null);
+  const limit = 20;
+
+  const { data, isLoading } = trpc.telegram.list.useQuery({
+    limit,
+    offset: page * limit,
+    threatLevel: threatLevel || undefined,
+    status: statusFilter || undefined,
+  });
+
+  const items = data?.items || [];
+  const total = data?.total || 0;
+  const totalPages = Math.ceil(total / limit);
 
   return (
-    <Layout title="رصد تليجرام" titleEn="Telegram">
-      {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
-        <div className="flex items-center justify-between">
-          <div />
-          <div className="text-right flex items-center gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">رصد تليجرام</h2>
-              <p className="text-xs text-gray-500">Telegram Channel Monitoring</p>
-              <p className="text-sm text-gray-400 mt-1">مراقبة القنوات التي تبيع أو تشارك قواعد بيانات سعودية باستخدام Telethon API</p>
+    <Layout title="رصد تليجرام" titleEn="Telegram Monitoring">
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-teal-600">{total}</div>
+              <div className="text-sm text-gray-500">إجمالي الرصد</div>
             </div>
-            <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
-              <Send size={24} className="text-blue-500 dark:text-blue-400" />
+            <div className="p-2 rounded-lg bg-teal-50 dark:bg-teal-500/10"><Send size={20} className="text-teal-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel("حرج"); setPage(0); }} className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-red-600">حرج</div>
+              <div className="text-sm text-gray-500">تهديدات حرجة</div>
             </div>
+            <div className="p-2 rounded-lg bg-red-50 dark:bg-red-500/10"><AlertTriangle size={20} className="text-red-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel("عالي"); setPage(0); }} className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-orange-600">عالي</div>
+              <div className="text-sm text-gray-500">تهديدات عالية</div>
+            </div>
+            <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-500/10"><Shield size={20} className="text-orange-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel(""); setStatusFilter(""); setPage(0); }} className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-green-600">الكل</div>
+              <div className="text-sm text-gray-500">عرض الكل</div>
+            </div>
+            <div className="p-2 rounded-lg bg-green-50 dark:bg-green-500/10"><Eye size={20} className="text-green-500" /></div>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{telegramChannels.length}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">قنوات مراقبة</div>
-          <div className="text-xs text-teal-600 dark:text-teal-400 mt-1">اضغط للتفاصيل ←</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400">{activeChannels}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">قنوات نشطة</div>
-          <div className="text-xs text-teal-600 dark:text-teal-400 mt-1">اضغط للتفاصيل ←</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{totalLeaks}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">تسريبات مكتشفة</div>
-          <div className="text-xs text-teal-600 dark:text-teal-400 mt-1">اضغط للتفاصيل ←</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{highImpact}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">قنوات عالية التأثير</div>
-          <div className="text-xs text-teal-600 dark:text-teal-400 mt-1">اضغط للتفاصيل ←</div>
-        </div>
+      {/* Filters */}
+      <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 mb-6 flex items-center gap-4 flex-wrap bg-white dark:bg-[#111827]">
+        <select value={threatLevel} onChange={(e) => { setThreatLevel(e.target.value); setPage(0); }} className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 px-3 text-sm text-gray-600 dark:text-gray-300">
+          <option value="">جميع المستويات</option>
+          <option value="حرج">حرج</option>
+          <option value="عالي">عالي</option>
+          <option value="متوسط">متوسط</option>
+          <option value="منخفض">منخفض</option>
+        </select>
+        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }} className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 px-3 text-sm text-gray-600 dark:text-gray-300">
+          <option value="">جميع الحالات</option>
+          <option value="نشط">نشط</option>
+          <option value="مراقب">مراقب</option>
+          <option value="محظور">محظور</option>
+        </select>
+        {(threatLevel || statusFilter) && (
+          <button onClick={() => { setThreatLevel(""); setStatusFilter(""); setPage(0); }} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1"><X size={12} /> مسح الفلاتر</button>
+        )}
+        <div className="mr-auto text-sm text-gray-500">{total} نتيجة</div>
       </div>
 
-      {/* Search & Actions */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="flex-1 relative">
-          <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="البحث في القنوات..."
-            className="w-full bg-white dark:bg-[#111827] border border-gray-200 dark:border-white/10 rounded-lg py-2 pr-10 pl-4 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-teal-400"
-          />
+      {isLoading && (
+        <div className="flex items-center justify-center h-32">
+          <div className="w-8 h-8 border-3 border-teal-500 border-t-transparent rounded-full animate-spin" />
         </div>
-        <button onClick={() => toast.success("تم التحديث")} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10">
-          <RefreshCw size={14} />
-          تحديث
-        </button>
-        <button className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10">
-          <Filter size={14} />
-          فلترة
-        </button>
-      </div>
+      )}
 
-      {/* Channel Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {telegramChannels.map((channel) => (
-          <div key={channel.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 transition-all cursor-pointer bg-white dark:bg-[#111827]">
-            <div className="flex items-start justify-between mb-4">
+      {/* Items */}
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id} onClick={() => setSelected(item)} className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] hover:border-teal-300 dark:hover:border-teal-500/30 transition-all cursor-pointer hover:shadow-sm">
+            <div className="flex items-start justify-between">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${channel.status === "نشط" ? "bg-green-500" : "bg-red-500"}`} />
-                <span className={`text-xs ${channel.status === "نشط" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-                  {channel.status}
-                </span>
+                <span className="text-xs text-gray-400">{new Date(item.createdAt).toLocaleDateString("ar-SA")}</span>
+                <span className={`text-xs px-2 py-0.5 rounded ${threatColors[item.threatLevel] || "bg-gray-100 text-gray-600"}`}>{item.threatLevel}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{channel.name}</h4>
-                  <p className="text-xs text-gray-400">{channel.id}</p>
-                </div>
-                <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10">
-                  <Send size={16} className="text-blue-500 dark:text-blue-400" />
+              <div className="text-right flex-1 mr-3">
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{item.channelName}</h4>
+                <p className="text-xs text-gray-500 mt-0.5">{item.description ? String(item.description).slice(0, 100) : "بدون وصف"}...</p>
+                <div className="flex items-center gap-3 mt-1 justify-end text-xs text-gray-400">
+                  <span className="flex items-center gap-1"><Users size={10} /> {Number(item.memberCount).toLocaleString()} عضو</span>
+                  <span>{item.status}</span>
                 </div>
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
-                <div className="text-sm font-semibold text-gray-800 dark:text-white">{channel.subscribers.toLocaleString()}</div>
-                <div className="text-xs text-gray-400">مشترك</div>
-              </div>
-              <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
-                <div className="text-sm font-semibold text-amber-600 dark:text-amber-400">{channel.leaks}</div>
-                <div className="text-xs text-gray-400">تسريب</div>
-              </div>
-              <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
-                <div className="text-sm font-semibold text-gray-800 dark:text-white">{channel.lastActivity}</div>
-                <div className="text-xs text-gray-400">آخر نشاط</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-teal-600 dark:text-teal-400">اضغط للتفاصيل ←</span>
-              <span className={`text-xs px-2 py-0.5 rounded border ${impactColors[channel.impact]}`}>
-                تأثير {channel.impact}
-              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Latest Telegram Leaks Table */}
-      <div className="rounded-xl border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] overflow-hidden">
-        <div className="p-5 border-b border-gray-100 dark:border-white/5">
-          <h3 className="text-base font-semibold text-gray-800 dark:text-white text-right">أحدث تسريبات تليجرام</h3>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="p-2 rounded-lg border border-gray-200 dark:border-white/10 disabled:opacity-30 hover:bg-gray-50 text-gray-600"><ChevronRight size={16} /></button>
+          <span className="text-sm text-gray-500">{page + 1} / {totalPages}</span>
+          <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="p-2 rounded-lg border border-gray-200 dark:border-white/10 disabled:opacity-30 hover:bg-gray-50 text-gray-600"><ChevronLeft size={16} /></button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm" dir="rtl">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-white/[0.02]">
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">المعرّف</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">العنوان</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">القطاع</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">السجلات</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">التأثير</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">التاريخ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {telegramLeaks.map((leak, i) => (
-                <tr key={leak.id} className="border-t border-gray-50 dark:border-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer">
-                  <td className="px-4 py-3 text-xs font-mono text-gray-500">{leak.id}</td>
-                  <td className="px-4 py-3 text-sm text-gray-800 dark:text-gray-200 font-medium">{leak.title}</td>
-                  <td className="px-4 py-3 text-xs text-gray-500">{leak.sector}</td>
-                  <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-300 font-mono">{leak.records.toLocaleString()}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded ${impactBadgeColors[leak.impact] || "bg-gray-100 text-gray-600"}`}>
-                      {leak.impact}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-gray-400">{leak.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      )}
+
+      {/* Detail Modal */}
+      {selected && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
+          <div className="bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 w-full max-w-2xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-white/5">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-white">تفاصيل القناة</h3>
+            </div>
+            <div className="p-5 overflow-y-auto max-h-[70vh]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-500/10"><Send size={24} className="text-teal-600" /></div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-800 dark:text-white">{selected.channelName}</h4>
+                  <p className="text-sm text-gray-500">{selected.channelUrl ? String(selected.channelUrl) : "رابط غير متاح"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 text-center">
+                  <div className="text-xl font-bold text-gray-800 dark:text-white">{Number(selected.memberCount).toLocaleString()}</div>
+                  <div className="text-xs text-gray-500">عضو</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 text-center">
+                  <div className={`text-sm font-bold px-2 py-1 rounded inline-block ${threatColors[selected.threatLevel] || "bg-gray-100 text-gray-600"}`}>{selected.threatLevel}</div>
+                  <div className="text-xs text-gray-500 mt-1">مستوى التهديد</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 text-center">
+                  <div className="text-sm font-bold text-gray-800 dark:text-white">{selected.status}</div>
+                  <div className="text-xs text-gray-500 mt-1">الحالة</div>
+                </div>
+              </div>
+              {selected.description && (
+                <div className="mb-5">
+                  <h5 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">الوصف</h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{String(selected.description)}</p>
+                </div>
+              )}
+              {selected.keywords && (
+                <div className="mb-5">
+                  <h5 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">الكلمات المفتاحية</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {(Array.isArray(selected.keywords) ? selected.keywords : []).map((kw: string, i: number) => (
+                      <span key={i} className="text-xs px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-500/20">{kw}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="text-xs text-gray-400 mt-4">تاريخ الإضافة: {new Date(selected.createdAt).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }

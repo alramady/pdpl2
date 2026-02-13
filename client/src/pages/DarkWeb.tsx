@@ -1,138 +1,199 @@
+import { useState } from "react";
 import Layout from "@/components/Layout";
-import { darkWebSources, darkWebListings } from "@/lib/data";
-import { Globe, RefreshCw, Shield, DollarSign, Database, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
+import { Globe, Shield, AlertTriangle, Eye, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-const impactColors: Record<string, string> = {
-  "عالي": "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30",
-  "متوسط": "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30",
-  "محدود": "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30"
+const threatColors: Record<string, string> = {
+  "حرج": "bg-red-100 text-red-700",
+  "عالي": "bg-orange-100 text-orange-700",
+  "متوسط": "bg-amber-100 text-amber-700",
+  "منخفض": "bg-green-100 text-green-700",
 };
 
-const severityColors: Record<string, string> = {
-  "واسع النطاق": "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400",
-  "عالي": "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400",
-  "متوسط": "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400",
-  "محدود": "bg-gray-100 dark:bg-gray-500/20 text-gray-700 dark:text-gray-400"
+const typeColors: Record<string, string> = {
+  "منتدى": "bg-purple-100 text-purple-700",
+  "سوق": "bg-blue-100 text-blue-700",
+  "مدونة": "bg-teal-100 text-teal-700",
+  "خدمة": "bg-amber-100 text-amber-700",
 };
 
 export default function DarkWeb() {
+  const [page, setPage] = useState(0);
+  const [threatLevel, setThreatLevel] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [selected, setSelected] = useState<any>(null);
+  const limit = 20;
+
+  const { data, isLoading } = trpc.darkweb.list.useQuery({
+    limit,
+    offset: page * limit,
+    threatLevel: threatLevel || undefined,
+    status: undefined,
+  });
+
+  const items = data?.items || [];
+  const total = data?.total || 0;
+  const totalPages = Math.ceil(total / limit);
+
   return (
-    <Layout title="الدارك ويب" titleEn="Dark Web">
-      {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
-        <div className="flex items-center justify-between">
-          <div />
-          <div className="text-right flex items-center gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">رصد الدارك ويب</h2>
-              <p className="text-xs text-gray-500">Dark Web Monitoring</p>
-              <p className="text-sm text-gray-400 mt-1">مراقبة منتديات بيع البيانات وأسواق البيانات المسربة عبر شبكة Tor</p>
+    <Layout title="الدارك ويب" titleEn="Dark Web Monitoring">
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-purple-600">{total}</div>
+              <div className="text-sm text-gray-500">إجمالي المصادر</div>
             </div>
-            <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20">
-              <Globe size={24} className="text-purple-500 dark:text-purple-400" />
+            <div className="p-2 rounded-lg bg-purple-50"><Globe size={20} className="text-purple-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel("حرج"); setPage(0); }} className="rounded-xl p-4 border border-gray-100 bg-white cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-red-600">حرج</div>
+              <div className="text-sm text-gray-500">تهديدات حرجة</div>
             </div>
+            <div className="p-2 rounded-lg bg-red-50"><AlertTriangle size={20} className="text-red-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel("عالي"); setPage(0); }} className="rounded-xl p-4 border border-gray-100 bg-white cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-orange-600">عالي</div>
+              <div className="text-sm text-gray-500">تهديدات عالية</div>
+            </div>
+            <div className="p-2 rounded-lg bg-orange-50"><Shield size={20} className="text-orange-500" /></div>
+          </div>
+        </div>
+        <div onClick={() => { setThreatLevel(""); setTypeFilter(""); setPage(0); }} className="rounded-xl p-4 border border-gray-100 bg-white cursor-pointer hover:shadow-md transition-all">
+          <div className="flex items-center gap-3 justify-end">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-green-600">الكل</div>
+              <div className="text-sm text-gray-500">عرض الكل</div>
+            </div>
+            <div className="p-2 rounded-lg bg-green-50"><Eye size={20} className="text-green-500" /></div>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">10</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">مصادر مراقبة</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">131</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">تسريبات مكتشفة</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">35</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">عروض بيع نشطة</div>
-        </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827] cursor-pointer hover:shadow-md transition-all">
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400">34,326,000</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">سجلات مكشوفة</div>
-        </div>
+      {/* Filters */}
+      <div className="rounded-xl p-4 border border-gray-100 mb-6 flex items-center gap-4 flex-wrap bg-white">
+        <select value={threatLevel} onChange={(e) => { setThreatLevel(e.target.value); setPage(0); }} className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-600">
+          <option value="">جميع المستويات</option>
+          <option value="حرج">حرج</option>
+          <option value="عالي">عالي</option>
+          <option value="متوسط">متوسط</option>
+          <option value="منخفض">منخفض</option>
+        </select>
+        <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0); }} className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-600">
+          <option value="">جميع الأنواع</option>
+          <option value="منتدى">منتدى</option>
+          <option value="سوق">سوق</option>
+          <option value="مدونة">مدونة</option>
+          <option value="خدمة">خدمة</option>
+        </select>
+        {(threatLevel || typeFilter) && (
+          <button onClick={() => { setThreatLevel(""); setTypeFilter(""); setPage(0); }} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1"><X size={12} /> مسح</button>
+        )}
+        <div className="mr-auto text-sm text-gray-500">{total} نتيجة</div>
       </div>
 
-      {/* Sources */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={() => toast.success("تم التحديث")} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10">
-            <RefreshCw size={14} />
-            تحديث
-          </button>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            المصادر المراقبة
-            <Globe size={16} className="text-purple-500 dark:text-purple-400" />
-          </h3>
+      {isLoading && (
+        <div className="flex items-center justify-center h-32">
+          <div className="w-8 h-8 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {darkWebSources.map((source) => (
-            <div key={source.id} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 transition-all cursor-pointer bg-white dark:bg-[#111827]">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${source.status === "نشط" ? "bg-green-500" : "bg-red-500"}`} />
-                  <span className={`text-xs ${source.status === "نشط" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-                    {source.status}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{source.name}</h4>
-                    <p className="text-xs text-gray-400">{source.id}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-500/10">
-                    <Globe size={16} className="text-purple-500 dark:text-purple-400" />
-                  </div>
-                </div>
+      )}
+
+      {/* Items */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {items.map((item: any) => (
+          <div key={item.id} onClick={() => setSelected(item)} className="rounded-xl p-5 border border-gray-100 bg-white hover:border-purple-300 transition-all cursor-pointer hover:shadow-sm">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className={`text-xs px-2 py-0.5 rounded ${threatColors[item.threatLevel] || "bg-gray-100 text-gray-600"}`}>{item.threatLevel}</span>
+                <span className={`text-xs px-2 py-0.5 rounded ${typeColors[item.type] || "bg-gray-100 text-gray-600"}`}>{item.type}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-teal-600 dark:text-teal-400">اضغط للتفاصيل ←</span>
-                <div className="flex items-center gap-3">
-                  <span className={`text-xs px-2 py-0.5 rounded border ${impactColors[source.impact]}`}>
-                    تأثير {source.impact}
-                  </span>
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    <Shield size={12} />
-                    {source.leaks} تسريب
-                  </span>
-                </div>
+              <div className="text-right flex-1 mr-3">
+                <h4 className="text-sm font-semibold text-gray-800">{item.siteName}</h4>
+                <p className="text-xs text-gray-400 mt-0.5 font-mono">{item.onionUrl ? String(item.onionUrl).slice(0, 40) + "..." : ".onion"}</p>
               </div>
             </div>
-          ))}
-        </div>
+            <p className="text-xs text-gray-500 text-right mb-3">{item.description ? String(item.description).slice(0, 80) : ""}...</p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">{new Date(item.lastScanned).toLocaleDateString("ar-SA")}</span>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span>{item.status}</span>
+                <span className={`w-2 h-2 rounded-full ${item.status === "نشط" ? "bg-green-500" : item.status === "متوقف" ? "bg-red-500" : "bg-amber-500"}`} />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Listings */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 text-right">آخر عروض البيع المرصودة</h3>
-        <div className="space-y-4">
-          {darkWebListings.map((listing, i) => (
-            <div key={i} className="rounded-xl p-5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 transition-all cursor-pointer bg-white dark:bg-[#111827]">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <div className="text-sm font-bold text-amber-600 dark:text-amber-400">{listing.price}</div>
-                    <div className="text-xs text-gray-500">{listing.records.toLocaleString()} سجل</div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${severityColors[listing.severity]}`}>{listing.severity}</span>
-                    <span className="text-xs text-gray-500">{listing.source}</span>
-                    <span className="text-xs text-gray-400">{listing.date}</span>
-                  </div>
-                </div>
-                <div className="text-right flex-1 mr-4">
-                  <h4 className="text-sm font-semibold text-gray-800 dark:text-white">{listing.title}</h4>
-                  <p className="text-xs text-gray-500 mt-1">{listing.titleEn}</p>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="p-2 rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50 text-gray-600"><ChevronRight size={16} /></button>
+          <span className="text-sm text-gray-500">{page + 1} / {totalPages}</span>
+          <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="p-2 rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50 text-gray-600"><ChevronLeft size={16} /></button>
+        </div>
+      )}
+
+      {/* Detail Modal */}
+      {selected && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-2xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-gray-800">تفاصيل الموقع</h3>
+            </div>
+            <div className="p-5 overflow-y-auto max-h-[70vh]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-purple-50"><Globe size={24} className="text-purple-600" /></div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-800">{selected.siteName}</h4>
+                  <p className="text-xs text-gray-400 font-mono">{selected.onionUrl ? String(selected.onionUrl) : ".onion"}</p>
                 </div>
               </div>
-              <div className="text-xs text-teal-600 dark:text-teal-400 mt-2">اضغط للتفاصيل ←</div>
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className={`text-sm font-bold px-2 py-1 rounded inline-block ${threatColors[selected.threatLevel] || "bg-gray-100"}`}>{selected.threatLevel}</div>
+                  <div className="text-xs text-gray-500 mt-1">مستوى التهديد</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className={`text-sm font-bold px-2 py-1 rounded inline-block ${typeColors[selected.type] || "bg-gray-100"}`}>{selected.type}</div>
+                  <div className="text-xs text-gray-500 mt-1">النوع</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className="text-sm font-bold text-gray-800">{selected.status}</div>
+                  <div className="text-xs text-gray-500 mt-1">الحالة</div>
+                </div>
+              </div>
+              {selected.description && (
+                <div className="mb-5">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-2">الوصف</h5>
+                  <p className="text-sm text-gray-600 leading-relaxed">{String(selected.description)}</p>
+                </div>
+              )}
+              {selected.keywords && (
+                <div className="mb-5">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-2">الكلمات المفتاحية</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {(Array.isArray(selected.keywords) ? selected.keywords : []).map((kw: string, i: number) => (
+                      <span key={i} className="text-xs px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">{kw}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-xs text-gray-400 mt-4">
+                <span>آخر فحص: {new Date(selected.lastScanned).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</span>
+                <span>تاريخ الإضافة: {new Date(selected.createdAt).toLocaleDateString("ar-SA")}</span>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }

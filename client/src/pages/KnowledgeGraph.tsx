@@ -1,92 +1,136 @@
+import { useState, useMemo } from "react";
 import Layout from "@/components/Layout";
-import { Network, Zap, GitBranch, Database } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { GitBranch, Search, X, Database, Users, Building2, Network } from "lucide-react";
 
-const nodes = [
-  { name: "Gulf_Hackers_Team", type: "مجموعة", connections: 12 },
-  { name: "KSA_Data_Market", type: "سوق", connections: 8 },
-  { name: "BreachForums", type: "منتدى", connections: 15 },
-  { name: "بيانات حكومية", type: "بيانات", connections: 22 },
-  { name: "بيانات بنكية", type: "بيانات", connections: 18 },
-  { name: "InfoStealer Logs", type: "أداة", connections: 10 },
-];
+interface GraphNode { id: string; label: string; type: string; x: number; y: number; }
+interface GraphEdge { from: string; to: string; label: string; }
 
 export default function KnowledgeGraph() {
+  const { data: incidents } = trpc.incidents.list.useQuery({ limit: 20 });
+  const { data: leaks } = trpc.leaks.list.useQuery({ limit: 20 });
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { nodes, edges } = useMemo(() => {
+    const n: GraphNode[] = [];
+    const e: GraphEdge[] = [];
+    const sectors = new Set<string>();
+    const sources = new Set<string>();
+
+    n.push({ id: "center", label: "PDPL", type: "center", x: 400, y: 300 });
+
+    incidents?.items?.forEach((inc: any, i: number) => {
+      if (inc.sector && !sectors.has(inc.sector)) {
+        sectors.add(inc.sector);
+        const angle = (sectors.size / 8) * Math.PI * 2;
+        n.push({ id: `sector-${inc.sector}`, label: inc.sector, type: "sector", x: 400 + Math.cos(angle) * 200, y: 300 + Math.sin(angle) * 200 });
+        e.push({ from: "center", to: `sector-${inc.sector}`, label: "قطاع" });
+      }
+      if (i < 10) {
+        const angle = (i / 10) * Math.PI * 2;
+        n.push({ id: `inc-${inc.id}`, label: inc.title?.substring(0, 20) || `حادثة ${inc.id}`, type: "incident", x: 400 + Math.cos(angle) * 120, y: 300 + Math.sin(angle) * 120 });
+        if (inc.sector) e.push({ from: `sector-${inc.sector}`, to: `inc-${inc.id}`, label: "حادثة" });
+      }
+    });
+
+    leaks?.items?.forEach((leak: any) => {
+      if (leak.source && !sources.has(leak.source)) {
+        sources.add(leak.source);
+        const angle = (sources.size / 6) * Math.PI * 2 + Math.PI / 4;
+        n.push({ id: `source-${leak.source}`, label: leak.source, type: "source", x: 400 + Math.cos(angle) * 250, y: 300 + Math.sin(angle) * 250 });
+        e.push({ from: "center", to: `source-${leak.source}`, label: "مصدر" });
+      }
+    });
+
+    return { nodes: n, edges: e };
+  }, [incidents, leaks]);
+
+  const filteredNodes = searchQuery ? nodes.filter(n => n.label.includes(searchQuery)) : nodes;
+  const typeColors: Record<string, string> = { center: "#0d9488", sector: "#6366f1", incident: "#ef4444", source: "#f59e0b" };
+  const typeLabels: Record<string, string> = { center: "المركز", sector: "قطاع", incident: "حادثة", source: "مصدر" };
+
   return (
     <Layout title="رسم المعرفة" titleEn="Knowledge Graph">
-      <div className="rounded-xl p-6 mb-6 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5">
-        <div className="flex items-center justify-between">
-          <div />
-          <div className="text-right flex items-center gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-800 dark:text-white">رسم المعرفة</h2>
-              <p className="text-xs text-gray-400">Knowledge Graph & Entity Relationships</p>
-              <p className="text-sm text-gray-500 mt-1">خريطة العلاقات بين الجهات المهددة والتسريبات والبيانات</p>
-            </div>
-            <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20">
-              <Network size={24} className="text-purple-600 dark:text-purple-400" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="rounded-xl p-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5">
-          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">156</div>
-          <div className="text-sm text-gray-500">عقد مرصودة</div>
-        </div>
-        <div className="rounded-xl p-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5">
-          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">342</div>
-          <div className="text-sm text-gray-500">علاقة مكتشفة</div>
-        </div>
-        <div className="rounded-xl p-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5">
-          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">8</div>
-          <div className="text-sm text-gray-500">مجموعات رئيسية</div>
-        </div>
-      </div>
-
-      {/* Graph Visualization Placeholder */}
-      <div className="rounded-xl p-8 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5 mb-6">
-        <div className="relative h-80 flex items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center">
-            {nodes.map((node, i) => {
-              const angle = (i / nodes.length) * 2 * Math.PI;
-              const radius = 120;
-              const x = 50 + Math.cos(angle) * (radius / 3.5);
-              const y = 50 + Math.sin(angle) * (radius / 3.5);
-              return (
-                <div key={node.name} className="absolute" style={{ left: `${x}%`, top: `${y}%`, transform: "translate(-50%, -50%)" }}>
-                  <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-gray-200 dark:border-white/10 text-center hover:border-teal-300 dark:hover:border-teal-500/30 transition-all cursor-pointer">
-                    <div className="text-xs font-semibold text-gray-700 dark:text-gray-200">{node.name}</div>
-                    <div className="text-[10px] text-gray-400">{node.type} · {node.connections} علاقة</div>
-                  </div>
-                </div>
-              );
-            })}
-            <div className="p-4 rounded-full bg-teal-50 dark:bg-teal-500/10 border-2 border-teal-300 dark:border-teal-500/30">
-              <Network size={32} className="text-teal-600 dark:text-teal-400" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Entity List */}
-      <div className="rounded-xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-100 dark:border-white/5 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 dark:border-gray-100 dark:border-white/5">
-          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-800 dark:text-white text-right">العقد الرئيسية</h3>
-        </div>
-        {nodes.map((node, i) => (
-          <div key={i} className="flex items-center justify-between p-4 border-b border-gray-50 dark:border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-50 dark:bg-white/[0.02] cursor-pointer">
-            <span className="text-xs text-gray-400">{node.connections} علاقة</span>
-            <div className="flex items-center gap-3">
-              <div>
-                <span className="text-sm text-gray-700 dark:text-gray-200">{node.name}</span>
-                <span className="text-xs text-gray-400 mr-2">{node.type}</span>
-              </div>
-              <GitBranch size={14} className="text-purple-500" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {[
+          { label: "العقد", value: nodes.length, icon: <GitBranch size={20} className="text-teal-600" />, bg: "bg-teal-50" },
+          { label: "الروابط", value: edges.length, icon: <Database size={20} className="text-blue-600" />, bg: "bg-blue-50" },
+          { label: "القطاعات", value: nodes.filter(n => n.type === "sector").length, icon: <Building2 size={20} className="text-indigo-600" />, bg: "bg-indigo-50" },
+          { label: "المصادر", value: nodes.filter(n => n.type === "source").length, icon: <Users size={20} className="text-amber-600" />, bg: "bg-amber-50" },
+        ].map((s, i) => (
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="flex items-center gap-3 justify-end">
+              <div className="text-right"><div className="text-2xl font-bold text-gray-800">{s.value}</div><div className="text-xs text-gray-500">{s.label}</div></div>
+              <div className={`p-2 rounded-lg ${s.bg}`}>{s.icon}</div>
             </div>
           </div>
         ))}
       </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 mb-4 p-4">
+        <div className="flex items-center gap-3">
+          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="بحث في العقد..."
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-teal-300" />
+          <Search size={18} className="text-gray-400" />
+        </div>
+        <div className="flex items-center gap-4 mt-3">
+          {Object.entries(typeLabels).map(([key, label]) => (
+            <div key={key} className="flex items-center gap-1.5 text-xs text-gray-500">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: typeColors[key] }} />
+              {label}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-4 relative" style={{ height: 500 }}>
+        <svg width="100%" height="100%" viewBox="0 0 800 600">
+          {edges.map((edge, i) => {
+            const from = nodes.find(n => n.id === edge.from);
+            const to = nodes.find(n => n.id === edge.to);
+            if (!from || !to) return null;
+            return <line key={i} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#e5e7eb" strokeWidth={1} />;
+          })}
+          {filteredNodes.map(node => (
+            <g key={node.id} onClick={() => setSelectedNode(node)} className="cursor-pointer">
+              <circle cx={node.x} cy={node.y} r={node.type === "center" ? 30 : 18} fill={typeColors[node.type] || "#6b7280"} opacity={0.85} />
+              <text x={node.x} y={node.y + (node.type === "center" ? 45 : 30)} textAnchor="middle" fontSize={node.type === "center" ? 12 : 9} fill="#374151">{node.label}</text>
+            </g>
+          ))}
+        </svg>
+      </div>
+
+      {selectedNode && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedNode(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between mb-4">
+              <button onClick={() => setSelectedNode(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-gray-800">تفاصيل العقدة</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between"><span className="text-sm text-gray-500">الاسم</span><span className="text-sm font-medium">{selectedNode.label}</span></div>
+              <div className="flex justify-between"><span className="text-sm text-gray-500">النوع</span><span className="text-sm font-medium">{typeLabels[selectedNode.type]}</span></div>
+              <div className="flex justify-between"><span className="text-sm text-gray-500">الروابط</span><span className="text-sm font-medium">{edges.filter(e => e.from === selectedNode.id || e.to === selectedNode.id).length}</span></div>
+              <div className="pt-2 border-t border-gray-100">
+                <h4 className="text-xs font-semibold text-gray-700 mb-2">العقد المتصلة</h4>
+                <div className="space-y-1">
+                  {edges.filter(e => e.from === selectedNode.id || e.to === selectedNode.id).slice(0, 5).map((e, i) => {
+                    const connectedId = e.from === selectedNode.id ? e.to : e.from;
+                    const connected = nodes.find(n => n.id === connectedId);
+                    return connected ? (
+                      <div key={i} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
+                        <span className="text-gray-400">{e.label}</span>
+                        <span className="text-gray-700">{connected.label}</span>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

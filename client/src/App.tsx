@@ -4,10 +4,9 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { useState, useEffect } from "react";
 
 // Pages
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import Reports from "./pages/Reports";
 import ThreatMap from "./pages/ThreatMap";
 import SmartRasid from "./pages/SmartRasid";
@@ -27,29 +26,18 @@ import MonitoringTasks from "./pages/MonitoringTasks";
 import AlertChannels from "./pages/AlertChannels";
 import ScheduledReports from "./pages/ScheduledReports";
 import Verification from "./pages/Verification";
-import Login from "./pages/Login";
+import IncidentDetail from "./pages/IncidentDetail";
+import LeakDetail from "./pages/LeakDetail";
 
 function Router() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("pdpl_auth") === "true";
-  });
-
-  const handleLogin = () => {
-    localStorage.setItem("pdpl_auth", "true");
-    setIsAuthenticated(true);
-  };
-
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
-
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={Home} />
       <Route path="/reports" component={Reports} />
       <Route path="/threat-map" component={ThreatMap} />
       <Route path="/smart-rasid" component={SmartRasid} />
       <Route path="/leaks" component={Leaks} />
+      <Route path="/leaks/:id" component={LeakDetail} />
       <Route path="/telegram" component={Telegram} />
       <Route path="/darkweb" component={DarkWeb} />
       <Route path="/paste-sites" component={PasteSites} />
@@ -65,6 +53,7 @@ function Router() {
       <Route path="/alert-channels" component={AlertChannels} />
       <Route path="/scheduled-reports" component={ScheduledReports} />
       <Route path="/verification" component={Verification} />
+      <Route path="/incidents/:id" component={IncidentDetail} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

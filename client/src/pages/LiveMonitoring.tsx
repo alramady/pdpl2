@@ -1,150 +1,186 @@
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
-import { Eye, Wifi, Activity, Shield, AlertTriangle, Clock, RefreshCw, Zap } from "lucide-react";
+import { Activity, Wifi, WifiOff, Clock, AlertTriangle, X, Zap, RefreshCw } from "lucide-react";
 
-const liveEvents = [
-  { time: "14:32:15", type: "تسريب جديد", source: "تليجرام", channel: "Gulf_Hackers_Team", severity: "عالي", description: "رصد منشور جديد يحتوي على بيانات شخصية سعودية" },
-  { time: "14:28:42", type: "فحص مكتمل", source: "مواقع لصق", channel: "Pastebin.com", severity: "معلومات", description: "اكتمل فحص Pastebin — لا تسريبات جديدة" },
-  { time: "14:25:08", type: "تنبيه", source: "دارك ويب", channel: "BreachForums", severity: "متوسط", description: "عرض بيع جديد لبيانات سعودية على BreachForums" },
-  { time: "14:20:33", type: "تحليل AI", source: "راصد الذكي", channel: "AI Engine", severity: "معلومات", description: "تم تصنيف 15 سجل PII جديد تلقائياً" },
-  { time: "14:15:19", type: "تسريب جديد", source: "تليجرام", channel: "KSA_Data_Market", severity: "عالي", description: "رصد قاعدة بيانات عملاء مطروحة للبيع" },
-  { time: "14:10:55", type: "فحص مكتمل", source: "دارك ويب", channel: "XSS.is", severity: "معلومات", description: "اكتمل فحص XSS Forum — 2 منشورات جديدة" },
-  { time: "14:05:27", type: "تنبيه", source: "تليجرام", channel: "Saudi_InfoStealer_Logs", severity: "عالي", description: "نشاط مكثف في قناة InfoStealer — 8 منشورات خلال ساعة" },
-  { time: "14:00:44", type: "تحليل AI", source: "راصد الذكي", channel: "AI Engine", severity: "معلومات", description: "تم اكتشاف نمط تسريب متكرر من نفس المصدر" },
-  { time: "13:55:12", type: "تسريب جديد", source: "مواقع لصق", channel: "Ghostbin.com", severity: "متوسط", description: "رصد لصق يحتوي على بيانات اعتماد سعودية" },
-  { time: "13:50:38", type: "فحص مكتمل", source: "تليجرام", channel: "All Channels", severity: "معلومات", description: "اكتمل فحص دوري لجميع قنوات تليجرام المراقبة" }
-];
+interface LogEntry {
+  id: number;
+  timestamp: string;
+  source: string;
+  type: string;
+  message: string;
+  severity: string;
+  details: string;
+  channel: string;
+}
 
 const severityColors: Record<string, string> = {
-  "عالي": "bg-red-500/20 text-red-400 border-r-red-500",
-  "متوسط": "bg-amber-500/20 text-amber-400 border-r-amber-500",
-  "معلومات": "bg-blue-500/20 text-blue-400 border-r-blue-500"
+  "حرج": "bg-red-100 text-red-700",
+  "عالي": "bg-orange-100 text-orange-700",
+  "متوسط": "bg-amber-100 text-amber-700",
+  "منخفض": "bg-green-100 text-green-700",
+  "معلومات": "bg-blue-100 text-blue-700",
 };
 
 const sourceIcons: Record<string, string> = {
   "تليجرام": "📱",
   "دارك ويب": "🌐",
   "مواقع لصق": "📋",
-  "راصد الذكي": "🤖"
+  "منتديات": "💬",
+  "النظام": "⚙️",
+  "راصد الذكي": "🤖",
 };
 
+const initialLogs: LogEntry[] = [
+  { id: 1, timestamp: new Date().toISOString(), source: "تليجرام", type: "تسريب جديد", channel: "Gulf_Hackers_Team", message: "رصد منشور جديد يحتوي على بيانات شخصية سعودية — 5,200 عنوان بريد", severity: "حرج", details: "تم رصد نشر قائمة بريد إلكتروني تحتوي على 5,200 عنوان بريد حكومي سعودي على قناة تليجرام. القائمة تشمل عناوين من وزارات متعددة." },
+  { id: 2, timestamp: new Date(Date.now() - 60000).toISOString(), source: "دارك ويب", type: "عرض بيع", channel: "BreachForums", message: "عرض بيع قاعدة بيانات عملاء بنك سعودي — 120,000 سجل", severity: "حرج", details: "تم رصد إعلان على BreachForums لبيع قاعدة بيانات تحتوي على 120,000 سجل عميل لبنك سعودي. السعر المطلوب 5,000 دولار." },
+  { id: 3, timestamp: new Date(Date.now() - 120000).toISOString(), source: "مواقع لصق", type: "تسريب جديد", channel: "Pastebin.com", message: "نشر أرقام هوية وطنية على Pastebin — 3,400 رقم", severity: "عالي", details: "تم اكتشاف نشر 3,400 رقم هوية وطنية سعودية على Pastebin مع أرقام هواتف مرتبطة." },
+  { id: 4, timestamp: new Date(Date.now() - 180000).toISOString(), source: "النظام", type: "فحص مكتمل", channel: "All Sources", message: "اكتمال فحص دوري — 12 مصدر", severity: "معلومات", details: "تم إكمال الفحص الدوري لجميع المصادر المراقبة (12 مصدر). لم يتم اكتشاف تسريبات جديدة في هذا الفحص." },
+  { id: 5, timestamp: new Date(Date.now() - 240000).toISOString(), source: "تليجرام", type: "نشاط مشبوه", channel: "KSA_Data_Market", message: "نشاط مشبوه في قناة KSA_Data_Market — عرض بيع جديد", severity: "متوسط", details: "تم رصد نشاط متزايد في قناة KSA_Data_Market على تليجرام. تم نشر 3 رسائل تشير إلى بيع بيانات عملاء." },
+  { id: 6, timestamp: new Date(Date.now() - 300000).toISOString(), source: "منتديات", type: "ثغرة", channel: "XSS.is", message: "نشر ثغرة XSS في موقع حكومي سعودي", severity: "عالي", details: "تم نشر تفاصيل ثغرة XSS في موقع حكومي سعودي على منتدى XSS Forum." },
+  { id: 7, timestamp: new Date(Date.now() - 360000).toISOString(), source: "راصد الذكي", type: "تحليل AI", channel: "AI Engine", message: "تم تصنيف 15 سجل PII جديد تلقائياً", severity: "معلومات", details: "محرك الذكاء الاصطناعي صنّف 15 سجل بيانات شخصية جديد من مصادر متعددة." },
+  { id: 8, timestamp: new Date(Date.now() - 420000).toISOString(), source: "دارك ويب", type: "تسريب جديد", channel: "BreachForums", message: "تسريب بيانات اعتماد VPN لشركة سعودية — 850 سجل", severity: "حرج", details: "تم تسريب 850 بيانات اعتماد VPN لشركة اتصالات سعودية كبرى." },
+];
+
+const newMessages = [
+  "اكتشاف بيانات شخصية مسربة جديدة — أرقام هوية وطنية",
+  "رصد نشاط مشبوه في قناة مراقبة جديدة",
+  "اكتمال فحص مصدر جديد — لا تسريبات",
+  "تحديث حالة حادثة — تم التوثيق",
+  "رصد عرض بيع بيانات سعودية — قطاع الصحة",
+  "اكتشاف ثغرة أمنية جديدة في تطبيق حكومي",
+  "تم تصنيف 8 سجلات PII جديدة تلقائياً",
+  "رصد نشاط في قناة Gulf_Hackers_Team",
+];
+
 export default function LiveMonitoring() {
+  const [logs, setLogs] = useState<LogEntry[]>(initialLogs);
   const [isLive, setIsLive] = useState(true);
-  const [eventCount, setEventCount] = useState(liveEvents.length);
+  const [selected, setSelected] = useState<LogEntry | null>(null);
 
   useEffect(() => {
     if (!isLive) return;
+    const sources = Object.keys(sourceIcons);
+    const types = ["تسريب جديد", "عرض بيع", "نشاط مشبوه", "فحص مكتمل", "تنبيه", "تحليل AI"];
+    const severities = ["حرج", "عالي", "متوسط", "منخفض", "معلومات"];
+    const channels = ["Gulf_Hackers_Team", "BreachForums", "Pastebin.com", "KSA_Data_Market", "XSS.is", "AI Engine"];
+
     const interval = setInterval(() => {
-      setEventCount(prev => prev + 1);
-    }, 15000);
+      const newLog: LogEntry = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        source: sources[Math.floor(Math.random() * sources.length)],
+        type: types[Math.floor(Math.random() * types.length)],
+        channel: channels[Math.floor(Math.random() * channels.length)],
+        message: newMessages[Math.floor(Math.random() * newMessages.length)],
+        severity: severities[Math.floor(Math.random() * severities.length)],
+        details: "تفاصيل إضافية حول هذا الحدث. يتم تحديث البيانات في الوقت الفعلي من مصادر متعددة.",
+      };
+      setLogs(prev => [newLog, ...prev].slice(0, 50));
+    }, 5000);
     return () => clearInterval(interval);
   }, [isLive]);
 
   return (
     <Layout title="الرصد المباشر" titleEn="Live Monitoring">
       {/* Header */}
-      <div className="rounded-xl p-6 mb-6 border border-gray-100 dark:border-white/5 relative overflow-hidden bg-white dark:bg-[#111827]">
+      <div className="rounded-xl p-5 mb-6 bg-white border border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsLive(!isLive)}
-              className={`px-4 py-2 rounded-lg text-sm transition-colors ${isLive ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-gray-500/20 text-gray-400 border border-gray-500/30"}`}
-            >
+            <button onClick={() => setIsLive(!isLive)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isLive ? "bg-green-100 text-green-700 border border-green-200" : "bg-gray-100 text-gray-600 border border-gray-200"}`}>
+              {isLive ? <Wifi size={14} /> : <WifiOff size={14} />}
               {isLive ? "● مباشر" : "○ متوقف"}
             </button>
+            {isLive && <span className="flex items-center gap-1 text-xs text-green-600"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> يتم التحديث كل 5 ثوانٍ</span>}
           </div>
-          <div className="text-right flex items-center gap-4">
+          <div className="text-right flex items-center gap-3">
             <div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">الرصد المباشر</h2>
-              <p className="text-xs text-gray-500">Live Monitoring Feed</p>
-              <p className="text-sm text-gray-400 mt-1">تتبع الأحداث والتنبيهات في الوقت الفعلي</p>
-            </div>
-            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-              <Activity size={24} className="text-green-400" />
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2 justify-end">الرصد المباشر <Activity size={20} className="text-green-500" /></h2>
+              <p className="text-sm text-gray-500">تتبع الأحداث والتنبيهات في الوقت الفعلي</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
-          <div className="flex items-center gap-2 justify-end">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-green-400">32</div>
-              <div className="text-sm text-gray-400">قنوات نشطة</div>
-            </div>
-            <Wifi size={20} className="text-green-400" />
-          </div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+          <div className="text-2xl font-bold text-teal-600">{logs.length}</div>
+          <div className="text-sm text-gray-500">أحداث مسجلة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
-          <div className="flex items-center gap-2 justify-end">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">{eventCount}</div>
-              <div className="text-sm text-gray-400">أحداث اليوم</div>
-            </div>
-            <Activity size={20} className="text-teal-600 dark:text-teal-400" />
-          </div>
+        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+          <div className="text-2xl font-bold text-red-600">{logs.filter(l => l.severity === "حرج").length}</div>
+          <div className="text-sm text-gray-500">حرجة</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
-          <div className="flex items-center gap-2 justify-end">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-red-400">5</div>
-              <div className="text-sm text-gray-400">تنبيهات عالية</div>
-            </div>
-            <AlertTriangle size={20} className="text-red-400" />
-          </div>
+        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+          <div className="text-2xl font-bold text-orange-600">{logs.filter(l => l.severity === "عالي").length}</div>
+          <div className="text-sm text-gray-500">عالية</div>
         </div>
-        <div className="rounded-xl p-4 border border-gray-100 dark:border-white/5 bg-white dark:bg-[#111827]">
-          <div className="flex items-center gap-2 justify-end">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-amber-400">15</div>
-              <div className="text-sm text-gray-400">PII مصنف تلقائياً</div>
-            </div>
-            <Zap size={20} className="text-amber-400" />
-          </div>
+        <div className="rounded-xl p-4 border border-gray-100 bg-white">
+          <div className="text-2xl font-bold text-green-600">{logs.filter(l => l.severity === "معلومات").length}</div>
+          <div className="text-sm text-gray-500">معلومات</div>
         </div>
       </div>
 
-      {/* Live Feed */}
-      <div className="rounded-xl border border-gray-100 dark:border-white/5 overflow-hidden bg-white dark:bg-[#111827]">
-        <div className="p-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-white/5 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-white/10">
-            <RefreshCw size={12} />
-            تحديث
-          </button>
+      {/* Log Stream */}
+      <div className="rounded-xl border border-gray-100 bg-white overflow-hidden">
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+          <button onClick={() => setLogs(initialLogs)} className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg text-xs text-gray-600 hover:bg-gray-200"><RefreshCw size={12} /> تحديث</button>
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isLive ? "bg-green-400 animate-pulse" : "bg-gray-500"}`} />
-            <span className="text-sm font-semibold text-gray-800 dark:text-white">البث المباشر</span>
+            <span className={`w-2 h-2 rounded-full ${isLive ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+            <span className="text-sm font-semibold text-gray-800">البث المباشر</span>
           </div>
         </div>
-        <div className="divide-y divide-white/5">
-          {liveEvents.map((event, i) => (
-            <div key={i} className={`p-4 hover:bg-gray-50 dark:bg-white/[0.02] transition-colors cursor-pointer border-r-2 ${
-              event.severity === "عالي" ? "border-r-red-500" : event.severity === "متوسط" ? "border-r-amber-500" : "border-r-blue-500"
+        <div className="divide-y divide-gray-50">
+          {logs.map((log) => (
+            <div key={log.id} onClick={() => setSelected(log)} className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer border-r-2 ${
+              log.severity === "حرج" ? "border-r-red-500" : log.severity === "عالي" ? "border-r-orange-500" : log.severity === "متوسط" ? "border-r-amber-500" : "border-r-blue-500"
             }`}>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs px-2 py-0.5 rounded ${
-                    event.severity === "عالي" ? "bg-red-500/20 text-red-400" :
-                    event.severity === "متوسط" ? "bg-amber-500/20 text-amber-400" :
-                    "bg-blue-500/20 text-blue-400"
-                  }`}>{event.type}</span>
-                  <span className="text-xs text-gray-500">{event.source}</span>
-                  <span className="text-xs text-gray-600 font-mono">{event.time}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded ${severityColors[log.severity] || "bg-gray-100 text-gray-600"}`}>{log.type}</span>
+                  <span className="text-xs text-gray-500">{log.source}</span>
+                  <span className="text-xs text-gray-400 font-mono">{new Date(log.timestamp).toLocaleTimeString("ar-SA")}</span>
                 </div>
                 <div className="text-right flex-1 mr-4">
-                  <div className="flex items-center gap-2 justify-end">
-                    <span className="text-sm text-gray-800 dark:text-gray-200">{event.description}</span>
-                    <span>{sourceIcons[event.source]}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">{event.channel}</span>
+                  <span className="text-sm text-gray-700">{sourceIcons[log.source]} {log.message}</span>
+                  <div className="text-xs text-gray-400 mt-0.5">{log.channel}</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {selected && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg" onClick={e => e.stopPropagation()} dir="rtl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X size={18} /></button>
+              <h3 className="text-lg font-bold text-gray-800">تفاصيل الحدث</h3>
+            </div>
+            <div className="p-5">
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className={`text-xs font-bold px-2 py-1 rounded inline-block ${severityColors[selected.severity]}`}>{selected.severity}</div>
+                  <div className="text-xs text-gray-500 mt-1">الخطورة</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className="text-sm">{sourceIcons[selected.source]} {selected.source}</div>
+                  <div className="text-xs text-gray-500 mt-1">المصدر</div>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100 text-center">
+                  <div className="text-xs font-bold text-gray-800">{selected.channel}</div>
+                  <div className="text-xs text-gray-500 mt-1">القناة</div>
+                </div>
+              </div>
+              <h4 className="text-sm font-semibold text-gray-800 mb-2">{selected.message}</h4>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">{selected.details}</p>
+              <div className="text-xs text-gray-400">{new Date(selected.timestamp).toLocaleString("ar-SA")}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
